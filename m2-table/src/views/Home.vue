@@ -25,29 +25,33 @@ export default {
         label: "ID",
         isSortable: true,
         isFilterable: true,
+        isCellEditable: false,
         cellClassNames: "m2-table__cell--large"
       },
       {
         label: "Name",
         isSortable: true,
-        isFilterable: true
+        isFilterable: true,
+        isCellEditable: false
       },
       {
         label: "Description",
         isSortable: false,
         isFilterable: true,
-        isEditableCell: true,
+        isCellEditable: true,
         cellClassNames: "m2-table__cell--xl"
       },
       {
         label: "Date",
         isSortable: true,
-        isFilterable: false
+        isFilterable: false,
+        isCellEditable: false
       },
       {
         label: "Amount",
         isSortable: false,
         isFilterable: false,
+        isCellEditable: false,
         cellClassNames: "m2-table__cell--xs"
       }
     ],

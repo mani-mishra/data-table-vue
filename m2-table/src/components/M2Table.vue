@@ -47,10 +47,21 @@
           v-for="column in columns"
           :key="column.label"
         >
-          <div v-if="row.isEditing" class="m2-table-cell--editable">
-            <EditableCell :value="row[column.label]"></EditableCell>
-          </div>
-          <div v-else @click="onCellClick(row, )" class="m2-table-cell--raw">{{row[column.label]}}</div>
+          <input
+            v-focus
+            v-if="`${row.ID}_${column.label}` === currentEditingCellId"
+            @keyup.enter="saveCellData($event, row[column.label])"
+            @blur="saveCellData($event, row[column.label])"
+            class="m2-table__row-cell-input"
+            type="text"
+            :value="row[column.label]"
+          >
+          <div
+            v-else
+            @click="onCellClick(row, column)"
+            class="m2-table-cell"
+            :class="{'m2-table__row-cell--editable': column.isCellEditable}"
+          >{{row[column.label]}}</div>
         </td>
       </tr>
     </tbody>
@@ -58,13 +69,8 @@
 </template>
 
 <script>
-import EditableCell from "@/components/editable-cell.vue";
-
 export default {
   name: "m2-table",
-  components: {
-    EditableCell
-  },
   props: {
     columnData: Object,
     data: Array,
@@ -93,7 +99,8 @@ export default {
       filteredRows,
       sortOrders,
       columns,
-      sortKey: ""
+      sortKey: "",
+      currentEditingCellId: ""
     };
   },
 
@@ -132,6 +139,20 @@ export default {
   // },
 
   methods: {
+    onCellClick(row, column) {
+      if (column.isCellEditable) {
+        this.currentEditingCellId = `${row.ID}_${column.label}`;
+      }
+    },
+
+    saveCellData(event, oldValue) {
+      this.currentEditingCellId = "";
+      const newValue = event.target.value;
+      if (oldValue !== newValue) {
+        console.log("Saving to firebase");
+      }
+    },
+
     onColumnHeaderClick(column) {
       if (column.isFilterable) {
         this.columns = this.columns.map(col => {
@@ -254,7 +275,7 @@ $table-sort-icon-size: 10px;
     width: 85%;
     border: none;
     outline: none;
-    padding: 3px;
+    padding: 2px;
     &--filterable {
       cursor: pointer;
       &:hover {
@@ -302,6 +323,16 @@ $table-sort-icon-size: 10px;
     width: $table-cell-width;
     padding: 10px 0px 10px 10px;
     text-align: left;
+
+    &--editable {
+      cursor: pointer;
+    }
+  }
+
+  &__row-cell-input {
+    width: 85%;
+    height: 25px;
+    border: 1px solid $app-background-color__gray--theta;
   }
 
   &__cell {
