@@ -3,19 +3,34 @@
     <thead class="m2-table__header">
       <tr class="m2-table__header-row">
         <th
+          v-for="column in columns"
           class="m2-table__header-cell"
           :class="[{ 'm2-table__header-cell--active': sortKey == column.label}, column.cellClassNames]"
           :key="column.label"
-          v-for="column in columns"
-          contenteditable="true"
         >
-          {{ column.label | capitalize }}
-          <span
+          <div class="m2-table__header-filter">
+            <div
+              v-if="column.filterText || column.isEditing"
+              class="m2-table__header-filter-label"
+            >{{column.label}}</div>
+            <input
+              v-if="column.isEditing"
+              @keyup.enter="filterRows($event, column)"
+              class="m2-table__header-filter-input"
+              type="text"
+            >
+            <div
+              v-else
+              @click="onColumnHeaderClick(column)"
+              class="m2-table__header-label"
+            >{{column.filterText || column.label}}</div>
+            <!-- <div
             v-if="column.isSortable"
             class="m2-table__header-sort-icon"
             :class="sortOrders[column.label] > 0 ? 'm2-table__header-sort-icon--asc' : 'm2-table__header-sort-icon--desc'"
             @click="sortBy(column)"
-          ></span>
+            ></div>-->
+          </div>
         </th>
       </tr>
     </thead>
@@ -48,53 +63,61 @@ export default {
   props: {
     columnData: Object,
     data: Array,
-    columns: Array
+    rawColumns: Array
   },
 
   data() {
     const sortOrders = {};
-    this.columns.forEach(column => {
+    const filteredRows = [...this.data];
+    const columns = [...this.rawColumns];
+    columns.forEach(column => {
       if (column.isSortable) {
         sortOrders[column.label] = 1;
       }
 
       if (column.isEditable) {
-        column.isEditing = false;
+        //column.isEditing = false;
+      }
+
+      if (column.isFilterable) {
+        column.filterText = "";
       }
     });
 
     return {
+      filteredRows,
       sortOrders,
+      columns,
       sortKey: ""
     };
   },
 
   computed: {
-    filteredRows() {
-      const sortKey = this.sortKey;
-      const filterKey = this.filterKey && this.filterKey.toLowerCase();
-      const order = this.sortOrders[sortKey] || 1;
-      let data = this.data;
-      if (filterKey) {
-        data = data.filter(row => {
-          return Object.keys(row).some(function(key) {
-            return (
-              String(row[key])
-                .toLowerCase()
-                .indexOf(filterKey) > -1
-            );
-          });
-        });
-      }
-      if (sortKey) {
-        data = data.slice().sort(function(a, b) {
-          a = a[sortKey];
-          b = b[sortKey];
-          return (a === b ? 0 : a > b ? 1 : -1) * order;
-        });
-      }
-      return data;
-    }
+    // filteredRows() {
+    //   const sortKey = this.sortKey;
+    //   const filterKey = this.filterKey && this.filterKey.toLowerCase();
+    //   const order = this.sortOrders[sortKey] || 1;
+    //   let data = this.data;
+    //   if (filterKey) {
+    //     data = data.filter(row => {
+    //       return Object.keys(row).some(function(key) {
+    //         return (
+    //           String(row[key])
+    //             .toLowerCase()
+    //             .indexOf(filterKey) > -1
+    //         );
+    //       });
+    //     });
+    //   }
+    //   if (sortKey) {
+    //     data = data.slice().sort(function(a, b) {
+    //       a = a[sortKey];
+    //       b = b[sortKey];
+    //       return (a === b ? 0 : a > b ? 1 : -1) * order;
+    //     });
+    //   }
+    //   return data;
+    // }
   },
 
   filters: {
@@ -104,6 +127,27 @@ export default {
   },
 
   methods: {
+    onColumnHeaderClick(column) {
+      this.columns = this.columns.map(col => {
+        col.isEditing = col.label === column.label;
+        return col;
+      });
+    },
+
+    filterRows(event, column) {
+      column.filterText = event.target.value;
+      column.isEditing = false;
+      this.filteredRows = this.data.filter(row => {
+        return this.columns.every(column => {
+          return (
+            String(row[column.label]).search(
+              new RegExp(column.filterText, "i")
+            ) > -1
+          );
+        });
+      });
+    },
+
     onClick(row) {
       row.isEditing = true;
       //this.sortKey = column.label;
@@ -126,6 +170,7 @@ $table-color__gray--beta: #222;
 $table-color__gray__gamma: #d7d7d7;
 
 $table-cell-width: 240px;
+$table-sort-icon-size: 10px;
 
 .m2-table {
   height: 100%;
@@ -141,14 +186,18 @@ $table-cell-width: 240px;
   }
 
   &__header-row {
-    display: block;
-    position: relative;
+    display: flex;
+    height: 60px;
+    border-bottom: 2px solid $app-background-color__gray--alpha;
+    border-top: 2px solid $app-background-color__gray--alpha;
   }
 
   &__header-cell {
+    display: flex;
+    align-items: center;
     font-weight: 700;
     width: $table-cell-width;
-    padding: 10px 20px;
+    padding: 10px 0px 10px 10px;
     text-align: left;
     cursor: pointer;
     -webkit-user-select: none;
@@ -165,6 +214,25 @@ $table-cell-width: 240px;
     }
   }
 
+  &__header-filter {
+    width: 100%;
+  }
+
+  &__header-filter-label {
+    font-size: 0.7rem;
+    opacity: 0.7;
+  }
+
+  &__header-filter-input {
+    width: 80%;
+    border-radius: 1px;
+  }
+
+  &__header-label {
+    width: 80%;
+    vertical-align: middle;
+  }
+
   &__header-sort-icon {
     display: inline-block;
     vertical-align: middle;
@@ -174,15 +242,15 @@ $table-cell-width: 240px;
     opacity: 0.5;
 
     &--desc {
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-top: 4px solid #fff;
+      border-left: $table-sort-icon-size solid transparent;
+      border-right: $table-sort-icon-size solid transparent;
+      border-top: $table-sort-icon-size solid #fff;
     }
 
     &--asc {
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-bottom: 4px solid #fff;
+      border-left: $table-sort-icon-size solid transparent;
+      border-right: $table-sort-icon-size solid transparent;
+      border-bottom: $table-sort-icon-size solid #fff;
     }
   }
   // body
@@ -196,13 +264,13 @@ $table-cell-width: 240px;
 
   // row elements
   &__row {
-    background-color: $app-background-color__gray--alpha;
+    background-color: $app-background-color__gray--beta;
     color: $app-text-color--alpha;
   }
 
   &__row-cell {
     width: $table-cell-width;
-    padding: 10px 20px;
+    padding: 10px 0px 10px 10px;
     text-align: left;
   }
 
