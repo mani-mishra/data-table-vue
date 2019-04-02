@@ -9,27 +9,30 @@
           :key="column.label"
         >
           <div class="m2-table__header-filter">
+            <div class="m2-table__header-filter-text">
+              <div
+                v-if="column.filterText || column.isEditing"
+                class="m2-table__header-filter-label"
+              >{{column.label}}</div>
+              <input
+                v-if="column.isEditing"
+                @keyup.enter="filterRows($event, column)"
+                class="m2-table__header-filter-input"
+                type="text"
+              >
+              <div
+                v-else
+                @click="onColumnHeaderClick(column)"
+                class="m2-table__header-label"
+                :class="{'m2-table__header-label--filterable': column.isFilterable}"
+              >{{column.filterText || column.label}}</div>
+            </div>
             <div
-              v-if="column.filterText || column.isEditing"
-              class="m2-table__header-filter-label"
-            >{{column.label}}</div>
-            <input
-              v-if="column.isEditing"
-              @keyup.enter="filterRows($event, column)"
-              class="m2-table__header-filter-input"
-              type="text"
-            >
-            <div
-              v-else
-              @click="onColumnHeaderClick(column)"
-              class="m2-table__header-label"
-            >{{column.filterText || column.label}}</div>
-            <!-- <div
-            v-if="column.isSortable"
-            class="m2-table__header-sort-icon"
-            :class="sortOrders[column.label] > 0 ? 'm2-table__header-sort-icon--asc' : 'm2-table__header-sort-icon--desc'"
-            @click="sortBy(column)"
-            ></div>-->
+              v-if="column.isSortable"
+              class="m2-table__header-sort-icon"
+              :class="sortOrders[column.label] > 0 ? 'm2-table__header-sort-icon--asc' : 'm2-table__header-sort-icon--desc'"
+              @click="sortBy(column)"
+            ></div>
           </div>
         </th>
       </tr>
@@ -45,7 +48,7 @@
           <div v-if="row.isEditing" class="m2-table-cell--editable">
             <EditableCell :value="row[column.label]"></EditableCell>
           </div>
-          <div v-else @dblclick="onClick(row)" class="m2-table-cell--raw">{{row[column.label]}}</div>
+          <div v-else @click="onCellClick(row, )" class="m2-table-cell--raw">{{row[column.label]}}</div>
         </td>
       </tr>
     </tbody>
@@ -120,18 +123,20 @@ export default {
     // }
   },
 
-  filters: {
-    capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-  },
+  // filters: {
+  //   capitalize(str) {
+  //     return str.charAt(0).toUpperCase() + str.slice(1);
+  //   }
+  // },
 
   methods: {
     onColumnHeaderClick(column) {
-      this.columns = this.columns.map(col => {
-        col.isEditing = col.label === column.label;
-        return col;
-      });
+      if (column.isFilterable) {
+        this.columns = this.columns.map(col => {
+          col.isEditing = col.label === column.label;
+          return col;
+        });
+      }
     },
 
     filterRows(event, column) {
@@ -199,7 +204,7 @@ $table-sort-icon-size: 10px;
     width: $table-cell-width;
     padding: 10px 0px 10px 10px;
     text-align: left;
-    cursor: pointer;
+
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -215,6 +220,12 @@ $table-sort-icon-size: 10px;
   }
 
   &__header-filter {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__header-filter-text {
     width: 100%;
   }
 
@@ -224,18 +235,27 @@ $table-sort-icon-size: 10px;
   }
 
   &__header-filter-input {
-    width: 80%;
-    border-radius: 1px;
+    width: 85%;
+    height: 20px;
+    border: 1px solid $app-background-color__gray--theta;
   }
 
   &__header-label {
-    width: 80%;
-    vertical-align: middle;
+    width: 85%;
+    border: none;
+    outline: none;
+    padding: 3px;
+    &--filterable {
+      cursor: pointer;
+      &:hover {
+        border-radius: 4px;
+        border: 1px solid $app-background-color__gray--theta;
+      }
+    }
   }
 
   &__header-sort-icon {
     display: inline-block;
-    vertical-align: middle;
     width: 0;
     height: 0;
     margin-left: 5px;

@@ -42,12 +42,12 @@ export default {
       {
         label: "Date",
         isSortable: true,
-        isFilterable: true
+        isFilterable: false
       },
       {
         label: "Amount",
         isSortable: false,
-        isFilterable: true,
+        isFilterable: false,
         cellClassNames: "m2-table__cell--xs"
       }
     ],
