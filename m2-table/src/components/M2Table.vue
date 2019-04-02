@@ -16,7 +16,9 @@
               >{{column.label}}</div>
               <input
                 v-if="column.isEditing"
+                v-focus
                 @keyup.enter="filterRows($event, column)"
+                @blur="filterRows($event, column)"
                 class="m2-table__header-filter-input"
                 type="text"
               >
@@ -163,6 +165,14 @@ export default {
         const key = column.label;
         this.sortKey = key;
         this.sortOrders[key] = this.sortOrders[key] * -1;
+      }
+    }
+  },
+  directives: {
+    focus: {
+      // directive definition
+      inserted: function(el) {
+        el.focus();
       }
     }
   }
