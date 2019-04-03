@@ -52,7 +52,6 @@
             v-focus
             v-if="`${row.ID}_${column.label}` === currentEditingCellId"
             @keyup.enter="saveCellData($event, column, row, rowIndex)"
-            @blur="saveCellData($event, column, row, rowIndex)"
             class="m2-table__row-cell-input"
             type="text"
             :value="row[column.label]"
@@ -202,9 +201,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-$table-color__gray--beta: #222;
-$table-color__gray__gamma: #d7d7d7;
-
 $table-cell-width: 240px;
 $table-sort-icon-size: 10px;
 
@@ -212,10 +208,11 @@ $table-sort-icon-size: 10px;
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
-
+  box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.2);
   // header elements
   &__header {
-    background-color: $table-color__gray--beta;
+    background-color: $app-background-color__gray--gamma;
     color: $app-text-color--alpha;
     font-size: 1rem;
   }
