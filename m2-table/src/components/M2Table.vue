@@ -5,7 +5,10 @@
         <th
           v-for="column in columns"
           class="m2-table__header-cell"
-          :class="[{ 'm2-table__header-cell--active': sortKey == column.label}, column.cellClassNames]"
+          :class="[
+            { 'm2-table__header-cell--active': sortKey == column.label },
+            column.cellClassNames
+          ]"
           :key="column.label"
         >
           <div class="m2-table__header-filter">
@@ -13,7 +16,9 @@
               <div
                 v-if="column.filterText || column.isEditing"
                 class="m2-table__header-filter-label"
-              >{{column.label}}</div>
+              >
+                {{ column.label }}
+              </div>
               <input
                 v-if="column.isEditing"
                 v-focus
@@ -22,18 +27,26 @@
                 :value="column.filterText"
                 class="m2-table__header-filter-input"
                 type="text"
-              >
+              />
               <div
                 v-else
                 @click="onColumnHeaderClick(column)"
                 class="m2-table__header-label"
-                :class="{'m2-table__header-label--filterable': column.isFilterable}"
-              >{{column.filterText || column.label}}</div>
+                :class="{
+                  'm2-table__header-label--filterable': column.isFilterable
+                }"
+              >
+                {{ column.filterText || column.label }}
+              </div>
             </div>
             <div
               v-if="column.isSortable"
               class="m2-table__header-sort-icon"
-              :class="sortOrders[column.label] > 0 ? 'm2-table__header-sort-icon--asc' : 'm2-table__header-sort-icon--desc'"
+              :class="
+                sortOrders[column.label] > 0
+                  ? 'm2-table__header-sort-icon--asc'
+                  : 'm2-table__header-sort-icon--desc'
+              "
               @click="sortBy(column)"
             ></div>
           </div>
@@ -41,7 +54,11 @@
       </tr>
     </thead>
     <tbody class="m2-table__body">
-      <tr class="m2-table__row" v-for="(row, rowIndex) in filteredRows" :key="row.ID">
+      <tr
+        class="m2-table__row"
+        v-for="(row, rowIndex) in filteredRows"
+        :key="row.ID"
+      >
         <td
           class="m2-table__row-cell"
           :class="column.cellClassNames"
@@ -55,13 +72,15 @@
             class="m2-table__row-cell-input"
             type="text"
             :value="row[column.label]"
-          >
+          />
           <div
             v-else
             @click="onCellClick(row, column)"
             class="m2-table-cell"
-            :class="{'m2-table__row-cell--editable': column.isCellEditable}"
-          >{{row[column.label]}}</div>
+            :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
+          >
+            {{ row[column.label] }}
+          </div>
         </td>
       </tr>
     </tbody>

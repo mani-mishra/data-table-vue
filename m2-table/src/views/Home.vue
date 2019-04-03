@@ -2,7 +2,11 @@
   <div class="page">
     <h1 class="page__header">Payments Data</h1>
     <div class="m2-table__container">
-      <M2Table :columnData="columnData" :rowData="payments" :rawColumns="gridColumns"></M2Table>
+      <M2Table
+        :columnData="columnData"
+        :rowData="payments"
+        :rawColumns="gridColumns"
+      ></M2Table>
     </div>
   </div>
 </template>
@@ -75,6 +79,3 @@ export default {
   }
 }
 </style>
-
-
-
