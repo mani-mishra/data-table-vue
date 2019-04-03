@@ -19,6 +19,7 @@
                 v-focus
                 @keyup.enter="filterRows($event, column)"
                 @blur="filterRows($event, column)"
+                :value="column.filterText"
                 class="m2-table__header-filter-input"
                 type="text"
               >
@@ -40,7 +41,7 @@
       </tr>
     </thead>
     <tbody class="m2-table__body">
-      <tr class="m2-table__row" v-for="row in filteredRows" :key="row.ID">
+      <tr class="m2-table__row" v-for="(row, rowIndex) in filteredRows" :key="row.ID">
         <td
           class="m2-table__row-cell"
           :class="column.cellClassNames"
@@ -50,8 +51,8 @@
           <input
             v-focus
             v-if="`${row.ID}_${column.label}` === currentEditingCellId"
-            @keyup.enter="saveCellData($event, row[column.label])"
-            @blur="saveCellData($event, row[column.label])"
+            @keyup.enter="saveCellData($event, column, row, rowIndex)"
+            @blur="saveCellData($event, column, row, rowIndex)"
             class="m2-table__row-cell-input"
             type="text"
             :value="row[column.label]"
@@ -73,13 +74,12 @@ export default {
   name: "m2-table",
   props: {
     columnData: Object,
-    data: Array,
+    rowData: Array,
     rawColumns: Array
   },
 
   data() {
     const sortOrders = {};
-    const filteredRows = [...this.data];
     const columns = [...this.rawColumns];
     columns.forEach(column => {
       if (column.isSortable) {
@@ -96,7 +96,6 @@ export default {
     });
 
     return {
-      filteredRows,
       sortOrders,
       columns,
       sortKey: "",
@@ -105,38 +104,44 @@ export default {
   },
 
   computed: {
-    // filteredRows() {
-    //   const sortKey = this.sortKey;
-    //   const filterKey = this.filterKey && this.filterKey.toLowerCase();
-    //   const order = this.sortOrders[sortKey] || 1;
-    //   let data = this.data;
-    //   if (filterKey) {
-    //     data = data.filter(row => {
-    //       return Object.keys(row).some(function(key) {
-    //         return (
-    //           String(row[key])
-    //             .toLowerCase()
-    //             .indexOf(filterKey) > -1
-    //         );
-    //       });
-    //     });
-    //   }
-    //   if (sortKey) {
-    //     data = data.slice().sort(function(a, b) {
-    //       a = a[sortKey];
-    //       b = b[sortKey];
-    //       return (a === b ? 0 : a > b ? 1 : -1) * order;
-    //     });
-    //   }
-    //   return data;
-    // }
-  },
+    filteredRows() {
+      const sortKey = this.sortKey;
+      const filterKey = this.filterKey && this.filterKey.toLowerCase();
+      const order = this.sortOrders[sortKey] || 1;
+      const columns = this.columns;
+      let data = this.rowData;
+      if (filterKey) {
+        data = data.filter(row => {
+          return Object.keys(row).some(function(key) {
+            return (
+              String(row[key])
+                .toLowerCase()
+                .indexOf(filterKey) > -1
+            );
+          });
+        });
+      }
 
-  // filters: {
-  //   capitalize(str) {
-  //     return str.charAt(0).toUpperCase() + str.slice(1);
-  //   }
-  // },
+      data = data.filter(row => {
+        return columns.every(column => {
+          return (
+            String(row[column.label]).search(
+              new RegExp(column.filterText, "i")
+            ) > -1
+          );
+        });
+      });
+
+      if (sortKey) {
+        data = data.slice().sort(function(a, b) {
+          a = a[sortKey];
+          b = b[sortKey];
+          return (a === b ? 0 : a > b ? 1 : -1) * order;
+        });
+      }
+      return data;
+    }
+  },
 
   methods: {
     onCellClick(row, column) {
@@ -145,11 +150,15 @@ export default {
       }
     },
 
-    saveCellData(event, oldValue) {
+    saveCellData(event, column, row, rowIndex) {
       this.currentEditingCellId = "";
+      const oldValue = row[column.label];
       const newValue = event.target.value;
       if (oldValue !== newValue) {
-        console.log("Saving to firebase");
+        this.$store.dispatch("updatePayments", {
+          row: { ...row, [column.label]: newValue },
+          rowIndex
+        });
       }
     },
 
@@ -163,22 +172,13 @@ export default {
     },
 
     filterRows(event, column) {
-      column.filterText = event.target.value;
-      column.isEditing = false;
-      this.filteredRows = this.data.filter(row => {
-        return this.columns.every(column => {
-          return (
-            String(row[column.label]).search(
-              new RegExp(column.filterText, "i")
-            ) > -1
-          );
-        });
+      this.columns = this.columns.map(col => {
+        if (col.label === column.label) {
+          col.isEditing = false;
+          column.filterText = event.target.value;
+        }
+        return col;
       });
-    },
-
-    onClick(row) {
-      row.isEditing = true;
-      //this.sortKey = column.label;
     },
 
     sortBy(column) {
@@ -209,7 +209,6 @@ $table-cell-width: 240px;
 $table-sort-icon-size: 10px;
 
 .m2-table {
-  height: 100%;
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
@@ -218,21 +217,18 @@ $table-sort-icon-size: 10px;
   &__header {
     background-color: $table-color__gray--beta;
     color: $app-text-color--alpha;
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   &__header-row {
-    display: flex;
     height: 60px;
     border-bottom: 2px solid $app-background-color__gray--alpha;
     border-top: 2px solid $app-background-color__gray--alpha;
   }
 
   &__header-cell {
-    display: flex;
-    align-items: center;
     font-weight: 700;
-    width: $table-cell-width;
+    min-width: $table-cell-width;
     padding: 10px 0px 10px 10px;
     text-align: left;
 
@@ -269,6 +265,8 @@ $table-sort-icon-size: 10px;
     width: 85%;
     height: 20px;
     border: 1px solid $app-background-color__gray--theta;
+    background-color: $app-background-color__gray--beta;
+    color: $app-text-color--alpha;
   }
 
   &__header-label {
@@ -279,7 +277,6 @@ $table-sort-icon-size: 10px;
     &--filterable {
       cursor: pointer;
       &:hover {
-        border-radius: 4px;
         border: 1px solid $app-background-color__gray--theta;
       }
     }
@@ -304,13 +301,10 @@ $table-sort-icon-size: 10px;
       border-bottom: $table-sort-icon-size solid #fff;
     }
   }
-  // body
+
   &__body {
-    display: block;
-    overflow: auto;
     width: 100%;
-    height: 65vh;
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   // row elements
@@ -320,12 +314,14 @@ $table-sort-icon-size: 10px;
   }
 
   &__row-cell {
-    width: $table-cell-width;
+    min-width: $table-cell-width;
     padding: 10px 0px 10px 10px;
     text-align: left;
-
     &--editable {
       cursor: pointer;
+      &:hover {
+        border: 1px solid $app-background-color__gray--theta;
+      }
     }
   }
 
@@ -337,19 +333,19 @@ $table-sort-icon-size: 10px;
 
   &__cell {
     &--xs {
-      width: #{$table-cell-width * 0.5};
+      min-width: #{$table-cell-width * 0.5};
     }
 
     &--small {
-      width: #{$table-cell-width * 0.75};
+      min-width: #{$table-cell-width * 0.75};
     }
 
     &--large {
-      width: #{$table-cell-width * 1.25};
+      min-width: #{$table-cell-width * 1.25};
     }
 
     &--xl {
-      width: #{$table-cell-width * 2};
+      min-width: #{$table-cell-width * 2};
     }
   }
 }
