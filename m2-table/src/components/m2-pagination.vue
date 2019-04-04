@@ -1,36 +1,48 @@
-<<template>
- <div class="pagination">
-  <div class="pagination__text">
-  Showing {{startOffset}} - {{endOffset}} of {{totalCount}} results  
+<template>
+  <div class="pagination">
+    <div class="pagination__text">
+      Showing {{ startOffset }} - {{ endOffset }} of {{ totalCount }} results
+    </div>
+    <div class="pagination__control-container">
+      <div class="pagination__control">
+        <a
+          class="pagination__control-link"
+          :class="{
+            'pagination__control-link--disabled': currentPageNumber === 1
+          }"
+          @click.prevent="fetchPage(currentPageNumber - 1)"
+        >
+          <div class="chevron chevron--left"></div>
+        </a>
+      </div>
+      <div
+        v-for="(pageLink, index) in pageLinks"
+        class="pagination__control"
+        :key="index"
+      >
+        <a
+          class="pagination__control-link"
+          :class="{
+            'pagination__control-link--active': pageLink === currentPageNumber
+          }"
+          @click.prevent="fetchPage(pageLink)"
+          >{{ pageLink }}</a
+        >
+      </div>
+      <div class="pagination__control">
+        <a
+          class="pagination__control-link"
+          :class="{
+            'pagination__control-link--disabled':
+              currentPageNumber + 1 > pageTotal
+          }"
+          @click.prevent="fetchPage(currentPageNumber + 1)"
+        >
+          <div class="chevron chevron--right"></div>
+        </a>
+      </div>
+    </div>
   </div>
-  <div class="pagination__control-container">
-  <div class="pagination__control">
-    <a
-      class="pagination__control-link"
-      :class="{ 'pagination__control-link--disabled': currentPageNumber === 1 }"
-      @click.prevent="fetchPage(currentPageNumber - 1)"
-    >
-      <div class="chevron chevron--left"></div>
-    </a>
-  </div>
-  <div v-for="pageLink in pageLinks" class="pagination__control">
-    <a
-      class="pagination__control-link"
-      :class="{ 'pagination__control-link--active': pageLink === currentPageNumber }"
-      @click.prevent="fetchPage(pageLink)"
-    >{{pageLink}}</a>
-  </div>
-  <div class="pagination__control">
-    <a
-      class="pagination__control-link"
-      :class="{ 'pagination__control-link--disabled': (currentPageNumber + 1) > pageTotal }"
-      @click.prevent="fetchPage(currentPageNumber + 1)"
-    >
-      <div class="chevron chevron--right"></div>
-    </a>
-  </div>
-  </div>
-</div> 
 </template>
 
 <script>
@@ -164,4 +176,3 @@ $chevron-size: 10px;
   }
 }
 </style>
-

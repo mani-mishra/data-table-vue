@@ -6,9 +6,9 @@
           <th
             v-for="column in columns"
             :class="[
-            { 'm2-table__header-cell--active': sortKey == column.id },
-            column.cellClassNames
-          ]"
+              { 'm2-table__header-cell--active': sortKey == column.id },
+              column.cellClassNames
+            ]"
             :key="column.id"
             class="m2-table__header-cell"
           >
@@ -17,7 +17,9 @@
                 <div
                   v-if="column.filterText || column.isEditing"
                   class="m2-table__header-filter-label"
-                >{{ column.label }}</div>
+                >
+                  {{ column.label }}
+                </div>
                 <input
                   v-if="column.isEditing"
                   v-focus
@@ -26,24 +28,26 @@
                   :value="column.filterText"
                   class="m2-table__header-filter-input"
                   type="text"
-                >
+                />
                 <div
                   v-else
                   @click="onColumnHeaderClick(column)"
                   class="m2-table__header-label"
                   :class="{
-                  'm2-table__header-label--filterable': column.isFilterable
-                }"
-                >{{ column.filterText || column.label }}</div>
+                    'm2-table__header-label--filterable': column.isFilterable
+                  }"
+                >
+                  {{ column.filterText || column.label }}
+                </div>
               </div>
               <div
                 v-if="column.isSortable"
                 class="m2-table__header-sort-icon"
                 :class="
-                sortOrders[column.id] > 0
-                  ? 'm2-table__header-sort-icon--asc'
-                  : 'm2-table__header-sort-icon--desc'
-              "
+                  sortOrders[column.id] > 0
+                    ? 'm2-table__header-sort-icon--asc'
+                    : 'm2-table__header-sort-icon--desc'
+                "
                 @click="sortBy(column)"
               ></div>
             </div>
@@ -51,7 +55,11 @@
         </tr>
       </thead>
       <tbody class="m2-table__body">
-        <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
+        <tr
+          class="m2-table__row"
+          v-for="(row, rowIndex) in paginatedRows"
+          :key="row.id"
+        >
           <td
             class="m2-table__row-cell"
             :class="column.cellClassNames"
@@ -62,18 +70,20 @@
               v-focus
               v-if="`${row.id}_${column.id}` === currentEditingCellId"
               @keyup.enter="saveCellData($event, column, row, rowIndex)"
-              @focusout="currentEditingCellId=''"
+              @focusout="currentEditingCellId = ''"
               class="m2-table__row-cell-input"
               type="text"
               :value="row[column.id]"
-            >
+            />
             <div
               v-else
               @click="onCellClick(row, column)"
               class="m2-table__row-cell-label truncate"
               :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
               :title="row[column.id]"
-            >{{ row[column.id] | runTransforms(column) }}</div>
+            >
+              {{ row[column.id] | runTransforms(column) }}
+            </div>
           </td>
         </tr>
       </tbody>
