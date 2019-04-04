@@ -66,7 +66,7 @@ export default {
 
   computed: {
     startOffset() {
-      return this.pageSize * (this.currentPageNumber - 1);
+      return 1 + this.pageSize * (this.currentPageNumber - 1);
     },
 
     endOffset() {
