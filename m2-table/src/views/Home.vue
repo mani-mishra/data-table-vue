@@ -1,18 +1,22 @@
 <template>
-  <div class="page">
+  <div v-if="payments.length" class="page">
     <h1 class="page__header">Payments</h1>
     <m2-table :model="payments" :columnDefs="gridColumns"></m2-table>
   </div>
+  <TileSpinner v-else></TileSpinner>
 </template>
 
 <script>
 import M2Table from "@/components/m2-table.vue";
+import TileSpinner from "@/components/spinner.vue";
+
 import { mapGetters } from "vuex";
 
 export default {
   name: "home",
   components: {
-    M2Table
+    M2Table,
+    TileSpinner
   },
 
   mounted() {
@@ -66,7 +70,7 @@ export default {
         isFilterable: false,
         isCellEditable: false,
         transform(val) {
-          return `$${val}`;
+          return `$ ${val}`;
         },
         cellClassNames: "m2-table__cell--xs"
       }

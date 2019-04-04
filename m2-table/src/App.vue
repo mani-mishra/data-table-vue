@@ -18,8 +18,8 @@ html {
 
 body {
   font-family: "Open Sans", sans-serif;
-  color: $color-white;
-  background-color: $color-black;
+  // color: $color-white;
+  // background-color: $color-black;
 }
 
 * {
@@ -31,7 +31,16 @@ body {
   margin: auto;
 
   &__header {
+    color: $color-gray;
     text-transform: uppercase;
   }
+}
+
+// Vue enter/exit transition classes
+.fade-enter-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>

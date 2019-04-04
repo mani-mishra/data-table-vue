@@ -115,7 +115,7 @@ $chevron-size: 10px;
   display: flex;
   justify-content: space-between;
   margin-top: 18px;
-  color: $color-white;
+  color: $color-primary;
 
   &__control-container {
     display: flex;
@@ -135,11 +135,11 @@ $chevron-size: 10px;
     text-decoration: none;
     cursor: pointer;
     &:hover {
-      color: $color-primary;
+      color: $color-secondary;
     }
 
     &--active {
-      color: $color-primary;
+      color: $color-ternary;
       border-bottom: 2px solid;
     }
 
@@ -157,7 +157,7 @@ $chevron-size: 10px;
   &--left {
     width: $chevron-size;
     height: $chevron-size;
-    border-right: solid $chevron-size $color-white;
+    border-right: solid $chevron-size $color-primary;
     border-bottom: solid $chevron-size transparent;
     border-top: solid $chevron-size transparent;
   }
@@ -165,7 +165,7 @@ $chevron-size: 10px;
   &--right {
     width: $chevron-size;
     height: $chevron-size;
-    border-left: solid $chevron-size $color-white;
+    border-left: solid $chevron-size $color-primary;
     border-bottom: solid $chevron-size transparent;
     border-top: solid $chevron-size transparent;
   }

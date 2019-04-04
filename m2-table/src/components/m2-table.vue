@@ -1,5 +1,13 @@
 <template>
   <div class="m2-table-container">
+    <transition name="fade">
+      <button
+        v-if="hasActiveFilters"
+        @click="resetFilters"
+        class="m2-table__reset-filters"
+      >Reset Filters</button>
+    </transition>
+
     <table class="m2-table">
       <thead class="m2-table__header">
         <tr class="m2-table__header-row">
@@ -143,6 +151,10 @@ export default {
   },
 
   computed: {
+    hasActiveFilters() {
+      return this.columns.some(col => col.filterText);
+    },
+
     pageSize() {
       return Math.min(this.tableProps.itemsPerPage, this.filteredRows.length);
     },
@@ -236,6 +248,14 @@ export default {
         this.sortKey = key;
         this.sortOrders[key] = this.sortOrders[key] * -1;
       }
+    },
+
+    resetFilters() {
+      this.columns = this.columns.map(col => {
+        col.filterText = "";
+        return col;
+      });
+      this.page = 1;
     }
   },
 
@@ -266,7 +286,6 @@ $table-cell-width: 25%;
 $table-sort-icon-size: 10px;
 
 .m2-table {
-  border: 1px solid #ccc;
   border-collapse: collapse;
   margin: 0;
   padding: 0;
@@ -274,21 +293,18 @@ $table-sort-icon-size: 10px;
   overflow: auto;
   table-layout: fixed;
 
-  box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.1),
+  box-shadow: inset 0px 2px 2px rgba(255, 255, 255, 0.1),
     0 1px 2px rgba(0, 0, 0, 0.2);
 
   // header elements
   &__header {
-    background-color: $app-background-color__gray--gamma;
-    color: $app-text-color--alpha;
+    background-color: $color-primary;
+    color: $color-white;
     font-weight: 500;
-    //text-transform: capitalize;
   }
 
   &__header-row {
     height: 60px;
-    border-bottom: 2px solid $app-background-color__gray--alpha;
-    border-top: 2px solid $app-background-color__gray--alpha;
   }
 
   &__header-cell {
@@ -302,7 +318,7 @@ $table-sort-icon-size: 10px;
     user-select: none;
 
     &--active {
-      color: $app-text-color--alpha;
+      color: $color-white;
 
       .m2-table__header-sort-icon {
         opacity: 1;
@@ -331,8 +347,8 @@ $table-sort-icon-size: 10px;
     height: 25px;
     border-radius: 4px;
     font-weight: 500;
-    border: 1px solid $app-background-color__gray--theta;
-    background-color: $color-black;
+    border: 1px solid $color-border;
+    background-color: $color-primary;
     color: $color-white;
   }
 
@@ -345,7 +361,7 @@ $table-sort-icon-size: 10px;
       cursor: pointer;
       &:hover {
         border-radius: 3px;
-        border: 1px solid $color-black;
+        border: 1px solid $color-border;
       }
     }
   }
@@ -360,24 +376,25 @@ $table-sort-icon-size: 10px;
     &--desc {
       border-left: $table-sort-icon-size solid transparent;
       border-right: $table-sort-icon-size solid transparent;
-      border-top: $table-sort-icon-size solid #fff;
+      border-top: $table-sort-icon-size solid $color-white;
     }
 
     &--asc {
       border-left: $table-sort-icon-size solid transparent;
       border-right: $table-sort-icon-size solid transparent;
-      border-bottom: $table-sort-icon-size solid #fff;
+      border-bottom: $table-sort-icon-size solid $color-white;
     }
   }
 
   &__body {
     width: 100%;
+    background-color: $color-white;
+    color: $color-secondary;
   }
 
   // row elements
   &__row {
-    background-color: $app-background-color__gray--beta;
-    color: $app-text-color--alpha;
+    border-top: 1px solid $color-border;
   }
 
   &__row-cell {
@@ -385,10 +402,6 @@ $table-sort-icon-size: 10px;
     text-align: left;
     &--editable {
       cursor: pointer;
-      &:hover {
-        border-radius: 3px;
-        border: 1px solid $color-black;
-      }
     }
   }
 
@@ -401,9 +414,7 @@ $table-sort-icon-size: 10px;
     font-size: 0.9rem;
     width: 90%;
     height: 30px;
-    border: 1px solid $color-black;
-    background-color: $color-black;
-    color: $color-white;
+    color: $color-secondary;
   }
 
   &__cell {
@@ -422,6 +433,19 @@ $table-sort-icon-size: 10px;
     &--xl {
       width: #{$table-cell-width * 2};
     }
+  }
+
+  &__reset-filters {
+    color: $color-white;
+    background-color: $color-ternary;
+    border-radius: 3px;
+    padding: 6px 12px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.1),
+      0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: display 0s linear 0.33s, opacity 0.33s linear;
+    cursor: pointer;
   }
 
   .truncate {

@@ -3,19 +3,12 @@ $app-width: 1800px;
 
 //// colors
 
-// text colors
-$app-text-color--alpha: #fff;
-$app-text-color--beta: rgba(26, 26, 26, 0.9);
-
-// background colors
-$app-background-color__gray--alpha: #000;
-$app-background-color__gray--beta: #364f54;
-$app-background-color__gray--gamma: #018ea7;
-$app-background-color__gray--theta: #d7d7d7;
-$app-background-color__gray--delta: #01798e;
-
 $color-white: #fff;
 $color-black: #000;
+$color-gray: rgba(26, 26, 26, 7);
 
-$color-primary: #0fb8dc;
-$color-primary-active: #fb715e;
+$color-primary: rgb(54, 79, 84);
+$color-secondary: rgba(26, 26, 26, 0.7);
+$color-ternary: #018ea7;
+
+$color-border: rgb(193, 212, 215);
