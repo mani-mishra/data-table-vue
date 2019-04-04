@@ -210,14 +210,13 @@ export default {
       }
     },
 
-    saveCellData(event, column, row, rowIndex) {
+    saveCellData(event, column, row) {
       this.currentEditingCellId = "";
       const oldValue = row[column.id];
       const newValue = event.target.value;
       if (oldValue !== newValue) {
         this.$store.dispatch("updatePayments", {
-          row: { ...row, [column.id]: newValue },
-          rowIndex
+          row: { ...row, [column.id]: newValue }
         });
       }
     },

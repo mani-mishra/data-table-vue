@@ -17,7 +17,7 @@ export default new Vuex.Store({
 
   mutations: {
     setPayments: (state, payload = []) => {
-      state.payments = payload;
+      state.payments = Object.values(payload);
     }
   },
 
@@ -31,10 +31,10 @@ export default new Vuex.Store({
         });
     },
 
-    updatePayments: async (context, { row, rowIndex }) => {
+    updatePayments: async (context, { row }) => {
       return firebase
         .database()
-        .ref(rowIndex)
+        .ref(row.id)
         .set(row)
         .then(() => {
           console.log("Updated payments data successfully.");
