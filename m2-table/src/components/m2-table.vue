@@ -79,10 +79,16 @@
 
 <script>
 export default {
-  name: "m2-table",
+  name: "M2Table",
   props: {
-    model: Array,
-    columnDefs: Array
+    model: {
+      type: Array,
+      required: true
+    },
+    columnDefs: {
+      type: Array,
+      required: true
+    }
   },
 
   data() {

@@ -2,13 +2,13 @@
   <div class="page">
     <h1 class="page__header">Payments Data</h1>
     <div class="m2-table__container">
-      <M2Table :model="payments" :columnDefs="gridColumns"></M2Table>
+      <m2-table :model="payments" :columnDefs="gridColumns"></m2-table>
     </div>
   </div>
 </template>
 
 <script>
-import M2Table from "@/components/M2Table.vue";
+import M2Table from "@/components/m2-table.vue";
 import { mapGetters } from "vuex";
 
 export default {

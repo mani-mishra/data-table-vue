@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { shallowMount } from "@vue/test-utils";
-import M2Table from "@/components/M2Table.vue";
+import M2Table from "@/components/m2-table.vue";
 
 const columnDefs = [
   {
@@ -54,7 +54,7 @@ const SORT_ICON = ".m2-table__header-sort-icon";
 const FILTERABLE_COLUMN_LABEL = ".m2-table__header-label--filterable";
 const FILTERABLE_COLUMN_INPUT = ".m2-table__header-filter-input";
 
-describe("M2Table.vue", () => {
+describe("m2-table.vue", () => {
   it("renders table correctly", () => {
     const wrapper = factory({ columnDefs, model });
     expect(wrapper.findAll(HEADER_CELL).length).to.equal(columnDefs.length);
