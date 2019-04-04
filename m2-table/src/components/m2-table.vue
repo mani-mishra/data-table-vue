@@ -1,5 +1,5 @@
 <template>
-  <div class="m2-table-container">
+  <div>
     <transition name="fade">
       <button
         v-if="hasActiveFilters"
@@ -7,85 +7,86 @@
         class="m2-table__reset-filters"
       >Reset Filters</button>
     </transition>
-
-    <table class="m2-table">
-      <thead class="m2-table__header">
-        <tr class="m2-table__header-row">
-          <th
-            v-for="column in columns"
-            :class="[
+    <div class="m2-table-container">
+      <table class="m2-table">
+        <thead class="m2-table__header">
+          <tr class="m2-table__header-row">
+            <th
+              v-for="column in columns"
+              :class="[
               { 'm2-table__header-cell--active': sortKey == column.id },
               column.cellClassNames
             ]"
-            :key="column.id"
-            class="m2-table__header-cell"
-          >
-            <div class="m2-table__header-filter">
-              <div class="m2-table__header-filter-text">
-                <div
-                  v-if="column.filterText || column.isEditing"
-                  class="m2-table__header-filter-label"
-                >{{ column.label }}</div>
-                <input
-                  v-if="column.isEditing"
-                  v-focus
-                  @keyup.enter="filterRows($event, column)"
-                  @blur="filterRows($event, column)"
-                  :value="column.filterText"
-                  class="m2-table__header-filter-input"
-                  type="text"
-                >
-                <div
-                  v-else
-                  @click="onColumnHeaderClick(column)"
-                  class="m2-table__header-label"
-                  :class="{
+              :key="column.id"
+              class="m2-table__header-cell"
+            >
+              <div class="m2-table__header-filter">
+                <div class="m2-table__header-filter-text">
+                  <div
+                    v-if="column.filterText || column.isEditing"
+                    class="m2-table__header-filter-label"
+                  >{{ column.label }}</div>
+                  <input
+                    v-if="column.isEditing"
+                    v-focus
+                    @keyup.enter="filterRows($event, column)"
+                    @blur="filterRows($event, column)"
+                    :value="column.filterText"
+                    class="m2-table__header-filter-input"
+                    type="text"
+                  >
+                  <div
+                    v-else
+                    @click="onColumnHeaderClick(column)"
+                    class="m2-table__header-label"
+                    :class="{
                     'm2-table__header-label--filterable': column.isFilterable
                   }"
-                >{{ column.filterText || column.label }}</div>
-              </div>
-              <div
-                v-if="column.isSortable"
-                class="m2-table__header-sort-icon"
-                :class="
+                  >{{ column.filterText || column.label }}</div>
+                </div>
+                <div
+                  v-if="column.isSortable"
+                  class="m2-table__header-sort-icon"
+                  :class="
                   sortOrders[column.id] > 0
                     ? 'm2-table__header-sort-icon--asc'
                     : 'm2-table__header-sort-icon--desc'
                 "
-                @click="sortBy(column)"
-              ></div>
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody class="m2-table__body">
-        <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
-          <td
-            class="m2-table__row-cell"
-            :class="column.cellClassNames"
-            v-for="column in columns"
-            :key="column.id"
-          >
-            <input
-              v-focus
-              v-if="`${row.id}_${column.id}` === currentEditingCellId"
-              @keyup.enter="saveCellData($event, column, row, rowIndex)"
-              @focusout="currentEditingCellId = ''"
-              class="m2-table__row-cell-input"
-              type="text"
-              :value="row[column.id]"
+                  @click="sortBy(column)"
+                ></div>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="m2-table__body">
+          <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
+            <td
+              class="m2-table__row-cell"
+              :class="column.cellClassNames"
+              v-for="column in columns"
+              :key="column.id"
             >
-            <div
-              v-else
-              @click="onCellClick(row, column)"
-              class="m2-table__row-cell-label truncate"
-              :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
-              :title="row[column.id]"
-            >{{ row[column.id] | runTransforms(column) }}</div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              <input
+                v-focus
+                v-if="`${row.id}_${column.id}` === currentEditingCellId"
+                @keyup.enter="saveCellData($event, column, row, rowIndex)"
+                @focusout="currentEditingCellId = ''"
+                class="m2-table__row-cell-input"
+                type="text"
+                :value="row[column.id]"
+              >
+              <div
+                v-else
+                @click="onCellClick(row, column)"
+                class="m2-table__row-cell-label truncate"
+                :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
+                :title="row[column.id]"
+              >{{ row[column.id] | runTransforms(column) }}</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <M2Pagination
       v-if="paginatedRows.length"
       :currentPage="page"
@@ -281,9 +282,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-$table-cell-width: 25%;
+$table-cell-width: 120px;
 $table-sort-icon-size: 10px;
 
+.m2-table-container {
+  overflow-x: auto;
+  overflow-y: none;
+}
 .m2-table {
   border-collapse: collapse;
   margin: 0;
@@ -307,6 +312,7 @@ $table-sort-icon-size: 10px;
   }
 
   &__header-cell {
+    min-width: $table-cell-width;
     width: $table-cell-width;
     padding: 2px 10px;
     text-align: left;
@@ -419,18 +425,22 @@ $table-sort-icon-size: 10px;
 
   &__cell {
     &--xs {
+      min-width: #{$table-cell-width * 0.5};
       width: #{$table-cell-width * 0.5};
     }
 
     &--small {
+      min-width: #{$table-cell-width * 0.75};
       width: #{$table-cell-width * 0.75};
     }
 
     &--large {
+      min-width: #{$table-cell-width * 1.25};
       width: #{$table-cell-width * 1.25};
     }
 
     &--xl {
+      min-width: #{$table-cell-width * 2};
       width: #{$table-cell-width * 2};
     }
   }
