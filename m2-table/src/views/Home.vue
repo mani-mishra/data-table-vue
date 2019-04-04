@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <h1 class="page__header">Payments Data</h1>
+    <h1 class="page__header">Payments</h1>
     <div class="m2-table__container">
       <m2-table :model="payments" :columnDefs="gridColumns"></m2-table>
     </div>

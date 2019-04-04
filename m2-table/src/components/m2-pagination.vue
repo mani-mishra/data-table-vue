@@ -108,7 +108,6 @@ $chevron-size: 10px;
   display: flex;
   justify-content: space-between;
   margin-top: 18px;
-  font-size: 1rem;
   color: $color-white;
 
   &__control-container {

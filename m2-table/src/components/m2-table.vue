@@ -62,6 +62,7 @@
               v-focus
               v-if="`${row.id}_${column.label}` === currentEditingCellId"
               @keyup.enter="saveCellData($event, column, row, rowIndex)"
+              @focusout="currentEditingCellId=''"
               class="m2-table__row-cell-input"
               type="text"
               :value="row[column.label]"
@@ -69,7 +70,7 @@
             <div
               v-else
               @click="onCellClick(row, column)"
-              class="m2-table-cell"
+              class="m2-table__row-cell-label truncate"
               :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
             >{{ row[column.label] }}</div>
           </td>
@@ -263,7 +264,8 @@ $table-sort-icon-size: 10px;
   &__header {
     background-color: $app-background-color__gray--gamma;
     color: $app-text-color--alpha;
-    font-size: 1rem;
+    font-weight: 700;
+    //text-transform: capitalize;
   }
 
   &__header-row {
@@ -273,9 +275,8 @@ $table-sort-icon-size: 10px;
   }
 
   &__header-cell {
-    font-weight: 700;
-    min-width: $table-cell-width;
-    padding: 10px 0px 10px 10px;
+    width: $table-cell-width;
+    padding: 2px 10px;
     text-align: left;
 
     -webkit-user-select: none;
@@ -299,31 +300,35 @@ $table-sort-icon-size: 10px;
   }
 
   &__header-filter-text {
-    width: 100%;
+    width: 85%;
   }
 
   &__header-filter-label {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 700;
     opacity: 0.7;
   }
 
   &__header-filter-input {
     width: 85%;
-    height: 20px;
+    height: 25px;
+    border-radius: 4px;
+    font-weight: 700;
     border: 1px solid $app-background-color__gray--theta;
-    background-color: $app-background-color__gray--beta;
-    color: $app-text-color--alpha;
+    background-color: $color-black;
+    color: $color-white;
   }
 
   &__header-label {
     width: 85%;
     border: none;
     outline: none;
-    padding: 2px;
+    padding: 3px;
     &--filterable {
       cursor: pointer;
       &:hover {
-        border: 1px solid $app-background-color__gray--theta;
+        border-radius: 3px;
+        border: 1px solid $color-black;
       }
     }
   }
@@ -350,7 +355,6 @@ $table-sort-icon-size: 10px;
 
   &__body {
     width: 100%;
-    font-size: 0.9rem;
   }
 
   // row elements
@@ -360,39 +364,55 @@ $table-sort-icon-size: 10px;
   }
 
   &__row-cell {
-    min-width: $table-cell-width;
-    padding: 10px 0px 10px 10px;
+    //max-width: $table-cell-width;
+    padding: 5px 0 0 5px;
     text-align: left;
     &--editable {
       cursor: pointer;
       &:hover {
-        border: 1px solid $app-background-color__gray--theta;
+        border-radius: 3px;
+        border: 1px solid $color-black;
       }
     }
   }
 
+  &__row-cell-label {
+    padding: 5px;
+    height: 40px;
+  }
+
   &__row-cell-input {
-    width: 85%;
-    height: 25px;
-    border: 1px solid $app-background-color__gray--theta;
+    font-size: 0.9rem;
+    width: 90%;
+    height: 30px;
+    border: 1px solid $color-black;
+    background-color: $color-black;
+    color: $color-white;
   }
 
   &__cell {
     &--xs {
-      min-width: #{$table-cell-width * 0.5};
+      width: #{$table-cell-width * 0.5};
     }
 
     &--small {
-      min-width: #{$table-cell-width * 0.75};
+      width: #{$table-cell-width * 0.75};
     }
 
     &--large {
-      min-width: #{$table-cell-width * 1.25};
+      width: #{$table-cell-width * 1.25};
     }
 
     &--xl {
-      min-width: #{$table-cell-width * 2};
+      width: #{$table-cell-width * 2};
     }
+  }
+
+  .truncate {
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 </style>

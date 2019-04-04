@@ -10,12 +10,15 @@
 
 <!-- Add global styles here -->
 <style lang="scss">
+html {
+  font-size: 16px;
+}
+
 body {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  font-size: 12px;
+  color: $color-white;
   background-color: $color-black;
 }
 
@@ -28,9 +31,8 @@ body {
   margin: auto;
 
   &__header {
-    font-size: 3rem;
+    font-size: 2rem;
     text-transform: uppercase;
-    color: $app-text-color--beta;
   }
 }
 </style>
