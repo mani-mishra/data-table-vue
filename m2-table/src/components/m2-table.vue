@@ -50,7 +50,7 @@
       </tr>
     </thead>
     <tbody class="m2-table__body">
-      <tr class="m2-table__row" v-for="(row, rowIndex) in filteredRows" :key="row.id">
+      <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
         <td
           class="m2-table__row-cell"
           :class="column.cellClassNames"
@@ -81,10 +81,19 @@
 export default {
   name: "M2Table",
   props: {
+    tableProps: {
+      typpe: Object,
+      default: () => ({
+        itemsPerPage: 10,
+        isPaginated: true
+      })
+    },
+
     model: {
       type: Array,
       required: true
     },
+
     columnDefs: {
       type: Array,
       required: true
@@ -112,11 +121,18 @@ export default {
       sortOrders,
       columns,
       sortKey: "",
-      currentEditingCellId: ""
+      currentEditingCellId: "",
+      page: 1
     };
   },
 
   computed: {
+    paginatedRows() {
+      const startIndex = (this.page - 1) * this.tableProps.itemsPerPage;
+      const endIndex = startIndex + this.tableProps.itemsPerPage;
+      return this.filteredRows.slice(startIndex, endIndex);
+    },
+
     filteredRows() {
       const sortKey = this.sortKey;
       const filterKey = this.filterKey && this.filterKey.toLowerCase();
