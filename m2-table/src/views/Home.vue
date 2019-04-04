@@ -1,9 +1,7 @@
 <template>
   <div class="page">
     <h1 class="page__header">Payments</h1>
-    <div class="m2-table__container">
-      <m2-table :model="payments" :columnDefs="gridColumns"></m2-table>
-    </div>
+    <m2-table :model="payments" :columnDefs="gridColumns"></m2-table>
   </div>
 </template>
 
@@ -28,47 +26,51 @@ export default {
   data: () => ({
     gridColumns: [
       {
-        label: "id",
+        id: "id",
+        label: "UUID",
         isSortable: true,
         isFilterable: true,
         isCellEditable: false,
         cellClassNames: "m2-table__cell--large"
       },
       {
-        label: "name",
+        id: "name",
+        label: "Name",
         isSortable: true,
         isFilterable: true,
         isCellEditable: false
       },
       {
-        label: "description",
-        isSortable: false,
+        id: "description",
+        label: "Description",
+        isSortable: true,
         isFilterable: true,
         isCellEditable: true,
         cellClassNames: "m2-table__cell--xl"
       },
       {
-        label: "date",
+        id: "date",
+        label: "Date (Local)",
         isSortable: true,
         isFilterable: false,
-        isCellEditable: false
+        isCellEditable: false,
+        transform(val) {
+          const dateObj = new Date(val);
+          return `${dateObj.toLocaleDateString()}, ${dateObj.toLocaleTimeString()}`;
+        }
       },
       {
-        label: "amount",
-        isSortable: false,
+        id: "amount",
+        label: "Amount",
+        isSortable: true,
         isFilterable: false,
         isCellEditable: false,
+        transform(val) {
+          return `$${val}`;
+        },
         cellClassNames: "m2-table__cell--xs"
       }
     ]
   })
 };
 </script>
-
-<style lang="scss" scoped>
-.m2-table {
-  &__container {
-    height: 85vh;
-  }
-}
-</style>

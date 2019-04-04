@@ -27,7 +27,7 @@ body {
 }
 
 .page {
-  width: 1200px;
+  width: 80%;
   margin: auto;
 
   &__header {

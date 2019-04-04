@@ -1,15 +1,15 @@
 <template>
-  <div class="table-container">
+  <div class="m2-table-container">
     <table class="m2-table">
       <thead class="m2-table__header">
         <tr class="m2-table__header-row">
           <th
             v-for="column in columns"
             :class="[
-            { 'm2-table__header-cell--active': sortKey == column.label },
+            { 'm2-table__header-cell--active': sortKey == column.id },
             column.cellClassNames
           ]"
-            :key="column.label"
+            :key="column.id"
             class="m2-table__header-cell"
           >
             <div class="m2-table__header-filter">
@@ -40,7 +40,7 @@
                 v-if="column.isSortable"
                 class="m2-table__header-sort-icon"
                 :class="
-                sortOrders[column.label] > 0
+                sortOrders[column.id] > 0
                   ? 'm2-table__header-sort-icon--asc'
                   : 'm2-table__header-sort-icon--desc'
               "
@@ -56,23 +56,24 @@
             class="m2-table__row-cell"
             :class="column.cellClassNames"
             v-for="column in columns"
-            :key="column.label"
+            :key="column.id"
           >
             <input
               v-focus
-              v-if="`${row.id}_${column.label}` === currentEditingCellId"
+              v-if="`${row.id}_${column.id}` === currentEditingCellId"
               @keyup.enter="saveCellData($event, column, row, rowIndex)"
               @focusout="currentEditingCellId=''"
               class="m2-table__row-cell-input"
               type="text"
-              :value="row[column.label]"
+              :value="row[column.id]"
             >
             <div
               v-else
               @click="onCellClick(row, column)"
               class="m2-table__row-cell-label truncate"
               :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
-            >{{ row[column.label] }}</div>
+              :title="row[column.id]"
+            >{{ row[column.id] | runTransforms(column) }}</div>
           </td>
         </tr>
       </tbody>
@@ -120,7 +121,7 @@ export default {
     const columns = [...this.columnDefs];
     columns.forEach(column => {
       if (column.isSortable) {
-        sortOrders[column.label] = 1;
+        sortOrders[column.id] = 1;
       }
 
       if (column.isEditable) {
@@ -173,9 +174,8 @@ export default {
       data = data.filter(row => {
         return columns.every(column => {
           return (
-            String(row[column.label]).search(
-              new RegExp(column.filterText, "i")
-            ) > -1
+            String(row[column.id]).search(new RegExp(column.filterText, "i")) >
+            -1
           );
         });
       });
@@ -194,17 +194,17 @@ export default {
   methods: {
     onCellClick(row, column) {
       if (column.isCellEditable) {
-        this.currentEditingCellId = `${row.id}_${column.label}`;
+        this.currentEditingCellId = `${row.id}_${column.id}`;
       }
     },
 
     saveCellData(event, column, row, rowIndex) {
       this.currentEditingCellId = "";
-      const oldValue = row[column.label];
+      const oldValue = row[column.id];
       const newValue = event.target.value;
       if (oldValue !== newValue) {
         this.$store.dispatch("updatePayments", {
-          row: { ...row, [column.label]: newValue },
+          row: { ...row, [column.id]: newValue },
           rowIndex
         });
       }
@@ -213,7 +213,7 @@ export default {
     onColumnHeaderClick(column) {
       if (column.isFilterable) {
         this.columns = this.columns.map(col => {
-          col.isEditing = col.label === column.label;
+          col.isEditing = col.label === column.id;
           return col;
         });
       }
@@ -221,7 +221,7 @@ export default {
 
     filterRows(event, column) {
       this.columns = this.columns.map(col => {
-        if (col.label === column.label) {
+        if (col.label === column.id) {
           col.isEditing = false;
           column.filterText = event.target.value;
         }
@@ -232,12 +232,23 @@ export default {
 
     sortBy(column) {
       if (column.isSortable) {
-        const key = column.label;
+        const key = column.id;
         this.sortKey = key;
         this.sortOrders[key] = this.sortOrders[key] * -1;
       }
     }
   },
+
+  filters: {
+    runTransforms: (value, column) => {
+      if (typeof column.transform === "function") {
+        return column.transform(value);
+      } else {
+        return value;
+      }
+    }
+  },
+
   directives: {
     focus: {
       // directive definition
@@ -251,15 +262,21 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-$table-cell-width: 240px;
+$table-cell-width: 25%;
 $table-sort-icon-size: 10px;
 
 .m2-table {
-  width: 100%;
-  table-layout: fixed;
+  border: 1px solid #ccc;
   border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow: auto;
+  table-layout: fixed;
+
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.1),
     0 1px 2px rgba(0, 0, 0, 0.2);
+
   // header elements
   &__header {
     background-color: $app-background-color__gray--gamma;
@@ -364,7 +381,6 @@ $table-sort-icon-size: 10px;
   }
 
   &__row-cell {
-    //max-width: $table-cell-width;
     padding: 5px 0 0 5px;
     text-align: left;
     &--editable {
