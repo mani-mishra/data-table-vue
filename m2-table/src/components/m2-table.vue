@@ -1,85 +1,99 @@
 <template>
-  <table class="m2-table">
-    <thead class="m2-table__header">
-      <tr class="m2-table__header-row">
-        <th
-          v-for="column in columns"
-          :class="[
+  <div class="table-container">
+    <table class="m2-table">
+      <thead class="m2-table__header">
+        <tr class="m2-table__header-row">
+          <th
+            v-for="column in columns"
+            :class="[
             { 'm2-table__header-cell--active': sortKey == column.label },
             column.cellClassNames
           ]"
-          :key="column.label"
-          class="m2-table__header-cell"
-        >
-          <div class="m2-table__header-filter">
-            <div class="m2-table__header-filter-text">
-              <div
-                v-if="column.filterText || column.isEditing"
-                class="m2-table__header-filter-label"
-              >{{ column.label }}</div>
-              <input
-                v-if="column.isEditing"
-                v-focus
-                @keyup.enter="filterRows($event, column)"
-                @blur="filterRows($event, column)"
-                :value="column.filterText"
-                class="m2-table__header-filter-input"
-                type="text"
-              >
-              <div
-                v-else
-                @click="onColumnHeaderClick(column)"
-                class="m2-table__header-label"
-                :class="{
+            :key="column.label"
+            class="m2-table__header-cell"
+          >
+            <div class="m2-table__header-filter">
+              <div class="m2-table__header-filter-text">
+                <div
+                  v-if="column.filterText || column.isEditing"
+                  class="m2-table__header-filter-label"
+                >{{ column.label }}</div>
+                <input
+                  v-if="column.isEditing"
+                  v-focus
+                  @keyup.enter="filterRows($event, column)"
+                  @blur="filterRows($event, column)"
+                  :value="column.filterText"
+                  class="m2-table__header-filter-input"
+                  type="text"
+                >
+                <div
+                  v-else
+                  @click="onColumnHeaderClick(column)"
+                  class="m2-table__header-label"
+                  :class="{
                   'm2-table__header-label--filterable': column.isFilterable
                 }"
-              >{{ column.filterText || column.label }}</div>
-            </div>
-            <div
-              v-if="column.isSortable"
-              class="m2-table__header-sort-icon"
-              :class="
+                >{{ column.filterText || column.label }}</div>
+              </div>
+              <div
+                v-if="column.isSortable"
+                class="m2-table__header-sort-icon"
+                :class="
                 sortOrders[column.label] > 0
                   ? 'm2-table__header-sort-icon--asc'
                   : 'm2-table__header-sort-icon--desc'
               "
-              @click="sortBy(column)"
-            ></div>
-          </div>
-        </th>
-      </tr>
-    </thead>
-    <tbody class="m2-table__body">
-      <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
-        <td
-          class="m2-table__row-cell"
-          :class="column.cellClassNames"
-          v-for="column in columns"
-          :key="column.label"
-        >
-          <input
-            v-focus
-            v-if="`${row.id}_${column.label}` === currentEditingCellId"
-            @keyup.enter="saveCellData($event, column, row, rowIndex)"
-            class="m2-table__row-cell-input"
-            type="text"
-            :value="row[column.label]"
+                @click="sortBy(column)"
+              ></div>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="m2-table__body">
+        <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
+          <td
+            class="m2-table__row-cell"
+            :class="column.cellClassNames"
+            v-for="column in columns"
+            :key="column.label"
           >
-          <div
-            v-else
-            @click="onCellClick(row, column)"
-            class="m2-table-cell"
-            :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
-          >{{ row[column.label] }}</div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            <input
+              v-focus
+              v-if="`${row.id}_${column.label}` === currentEditingCellId"
+              @keyup.enter="saveCellData($event, column, row, rowIndex)"
+              class="m2-table__row-cell-input"
+              type="text"
+              :value="row[column.label]"
+            >
+            <div
+              v-else
+              @click="onCellClick(row, column)"
+              class="m2-table-cell"
+              :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
+            >{{ row[column.label] }}</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <M2Pagination
+      v-if="paginatedRows.length"
+      :currentPage="page"
+      :pageSize="pageSize"
+      :totalCount="filteredRows.length"
+      v-on:pageChanged="page = $event"
+    ></M2Pagination>
+  </div>
 </template>
 
 <script>
+import M2Pagination from "@/components/m2-pagination.vue";
 export default {
   name: "M2Table",
+  components: {
+    M2Pagination
+  },
+
   props: {
     tableProps: {
       typpe: Object,
@@ -127,6 +141,10 @@ export default {
   },
 
   computed: {
+    pageSize() {
+      return Math.min(this.tableProps.itemsPerPage, this.filteredRows.length);
+    },
+
     paginatedRows() {
       const startIndex = (this.page - 1) * this.tableProps.itemsPerPage;
       const endIndex = startIndex + this.tableProps.itemsPerPage;
@@ -208,6 +226,7 @@ export default {
         }
         return col;
       });
+      this.page = 1;
     },
 
     sortBy(column) {
