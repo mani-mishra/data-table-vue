@@ -1,0 +1,14 @@
+{
+  "firstName": "Mani",
+  "lastName": "Mishra",
+  "country": "India",
+  "city": "Bangalore",
+  "yearsOfEx": "5",
+  "programmingLanguages": ["javascript", "typescript", "python"],
+  "webFrameworks": ["EmberJS", "Angular", "Django"],
+  "emailAddress": "manimihsra902@gmail.com",
+  "socialLinks": {
+    "linkedIn": "https://www.linkedin.com/in/manimishra",
+    "github": "https://github.com/manimishra"
+  }
+}

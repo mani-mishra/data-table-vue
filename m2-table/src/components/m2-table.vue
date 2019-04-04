@@ -213,7 +213,7 @@ export default {
     onColumnHeaderClick(column) {
       if (column.isFilterable) {
         this.columns = this.columns.map(col => {
-          col.isEditing = col.label === column.id;
+          col.isEditing = col.id === column.id;
           return col;
         });
       }
@@ -221,7 +221,7 @@ export default {
 
     filterRows(event, column) {
       this.columns = this.columns.map(col => {
-        if (col.label === column.id) {
+        if (col.id === column.id) {
           col.isEditing = false;
           column.filterText = event.target.value;
         }
