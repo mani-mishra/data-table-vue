@@ -17,9 +17,7 @@
                 <div
                   v-if="column.filterText || column.isEditing"
                   class="m2-table__header-filter-label"
-                >
-                  {{ column.label }}
-                </div>
+                >{{ column.label }}</div>
                 <input
                   v-if="column.isEditing"
                   v-focus
@@ -28,7 +26,7 @@
                   :value="column.filterText"
                   class="m2-table__header-filter-input"
                   type="text"
-                />
+                >
                 <div
                   v-else
                   @click="onColumnHeaderClick(column)"
@@ -36,9 +34,7 @@
                   :class="{
                     'm2-table__header-label--filterable': column.isFilterable
                   }"
-                >
-                  {{ column.filterText || column.label }}
-                </div>
+                >{{ column.filterText || column.label }}</div>
               </div>
               <div
                 v-if="column.isSortable"
@@ -55,11 +51,7 @@
         </tr>
       </thead>
       <tbody class="m2-table__body">
-        <tr
-          class="m2-table__row"
-          v-for="(row, rowIndex) in paginatedRows"
-          :key="row.id"
-        >
+        <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
           <td
             class="m2-table__row-cell"
             :class="column.cellClassNames"
@@ -74,16 +66,14 @@
               class="m2-table__row-cell-input"
               type="text"
               :value="row[column.id]"
-            />
+            >
             <div
               v-else
               @click="onCellClick(row, column)"
               class="m2-table__row-cell-label truncate"
               :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
               :title="row[column.id]"
-            >
-              {{ row[column.id] | runTransforms(column) }}
-            </div>
+            >{{ row[column.id] | runTransforms(column) }}</div>
           </td>
         </tr>
       </tbody>
@@ -291,7 +281,7 @@ $table-sort-icon-size: 10px;
   &__header {
     background-color: $app-background-color__gray--gamma;
     color: $app-text-color--alpha;
-    font-weight: 700;
+    font-weight: 500;
     //text-transform: capitalize;
   }
 
@@ -332,7 +322,7 @@ $table-sort-icon-size: 10px;
 
   &__header-filter-label {
     font-size: 0.8rem;
-    font-weight: 700;
+    font-weight: 500;
     opacity: 0.7;
   }
 
@@ -340,7 +330,7 @@ $table-sort-icon-size: 10px;
     width: 85%;
     height: 25px;
     border-radius: 4px;
-    font-weight: 700;
+    font-weight: 500;
     border: 1px solid $app-background-color__gray--theta;
     background-color: $color-black;
     color: $color-white;

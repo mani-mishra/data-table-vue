@@ -1,8 +1,8 @@
 <template>
   <div class="pagination">
-    <div class="pagination__text">
-      Showing {{ startOffset }} - {{ endOffset }} of {{ totalCount }} results
-    </div>
+    <div
+      class="pagination__text"
+    >Showing {{ startOffset }} - {{ endOffset }} of {{ totalCount }} results</div>
     <div class="pagination__control-container">
       <div class="pagination__control">
         <a
@@ -15,19 +15,14 @@
           <div class="chevron chevron--left"></div>
         </a>
       </div>
-      <div
-        v-for="(pageLink, index) in pageLinks"
-        class="pagination__control"
-        :key="index"
-      >
+      <div v-for="(pageLink, index) in pageLinks" class="pagination__control" :key="index">
         <a
           class="pagination__control-link"
           :class="{
             'pagination__control-link--active': pageLink === currentPageNumber
           }"
           @click.prevent="fetchPage(pageLink)"
-          >{{ pageLink }}</a
-        >
+        >{{ pageLink }}</a>
       </div>
       <div class="pagination__control">
         <a
@@ -135,7 +130,7 @@ $chevron-size: 10px;
   }
 
   &__control-link {
-    font-weight: 700;
+    font-weight: 500;
     width: 5x;
     text-decoration: none;
     cursor: pointer;
