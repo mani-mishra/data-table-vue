@@ -1,12 +1,20 @@
 <template>
   <div>
-    <transition name="fade">
-      <button
-        v-if="hasActiveFilters"
-        @click="resetFilters"
-        class="m2-table__reset-filters"
-      >Reset Filters</button>
-    </transition>
+    <div class="m2-table__actions">
+      <input
+        @@keyup.enter="searchRows"
+        v-model="searchText"
+        class="m2-table__search"
+        placeholder="Search Table"
+      >
+      <transition name="fade">
+        <button
+          v-if="hasActiveFilters"
+          @click="resetFilters"
+          class="m2-table__reset-filters"
+        >Reset Filters</button>
+      </transition>
+    </div>
     <div class="m2-table-container">
       <table class="m2-table">
         <thead class="m2-table__header">
@@ -133,10 +141,6 @@ export default {
         sortOrders[column.id] = 1;
       }
 
-      if (column.isEditable) {
-        //column.isEditing = false;
-      }
-
       if (column.isFilterable) {
         column.filterText = "";
       }
@@ -146,6 +150,7 @@ export default {
       sortOrders,
       columns,
       sortKey: "",
+      searchText: "",
       currentEditingCellId: "",
       page: 1
     };
@@ -153,7 +158,7 @@ export default {
 
   computed: {
     hasActiveFilters() {
-      return this.columns.some(col => col.filterText);
+      return this.searchText || this.columns.some(col => col.filterText);
     },
 
     pageSize() {
@@ -168,18 +173,14 @@ export default {
 
     filteredRows() {
       const sortKey = this.sortKey;
-      const filterKey = this.filterKey && this.filterKey.toLowerCase();
+      const searchText = this.searchText && this.searchText.toLowerCase();
       const order = this.sortOrders[sortKey] || 1;
       const columns = this.columns;
       let data = this.model;
-      if (filterKey) {
+      if (searchText) {
         data = data.filter(row => {
-          return Object.keys(row).some(function(key) {
-            return (
-              String(row[key])
-                .toLowerCase()
-                .indexOf(filterKey) > -1
-            );
+          return Object.keys(row).some(key => {
+            return String(row[key]).search(new RegExp(searchText, "i")) > -1;
           });
         });
       }
@@ -256,6 +257,7 @@ export default {
         return col;
       });
       this.page = 1;
+      this.searchText = "";
     }
   },
 
@@ -282,13 +284,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-$table-cell-width: 120px;
+$table-cell-width: 100px;
 $table-sort-icon-size: 10px;
 
 .m2-table-container {
   overflow-x: auto;
-  overflow-y: none;
 }
+
 .m2-table {
   border-collapse: collapse;
   margin: 0;
@@ -299,6 +301,31 @@ $table-sort-icon-size: 10px;
 
   box-shadow: inset 0px 2px 2px rgba(255, 255, 255, 0.1),
     0 1px 2px rgba(0, 0, 0, 0.2);
+
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    height: 35px;
+    margin-bottom: 10px;
+  }
+
+  &__search {
+    width: 20%;
+    border-radius: 2px;
+    border: 2px solid $color-border;
+    font-size: 1rem;
+    color: $color-gray;
+    &::-webkit-input-placeholder {
+      opacity: 0.7;
+      padding-left: 4px;
+    }
+    // ::-moz-placeholder { /* Firefox 19+ */
+    //   color: pink;
+    // }
+    // :-ms-input-placeholder { /* IE 10+ */
+    //   color: pink;
+    // }
+  }
 
   // header elements
   &__header {
@@ -450,7 +477,6 @@ $table-sort-icon-size: 10px;
     background-color: $color-ternary;
     border-radius: 3px;
     padding: 6px 12px;
-    margin-bottom: 10px;
     font-size: 1rem;
     box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.1),
       0 1px 2px rgba(0, 0, 0, 0.2);
