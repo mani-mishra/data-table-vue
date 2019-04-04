@@ -372,6 +372,7 @@ $table-sort-icon-size: 10px;
     height: 0;
     margin-left: 5px;
     opacity: 0.5;
+    cursor: pointer;
 
     &--desc {
       border-left: $table-sort-icon-size solid transparent;
