@@ -2,11 +2,7 @@
   <div class="page">
     <h1 class="page__header">Payments Data</h1>
     <div class="m2-table__container">
-      <M2Table
-        :columnData="columnData"
-        :rowData="payments"
-        :rawColumns="gridColumns"
-      ></M2Table>
+      <M2Table :model="payments" :columnDefs="gridColumns"></M2Table>
     </div>
   </div>
 </template>
@@ -30,38 +26,35 @@ export default {
   },
 
   data: () => ({
-    columnData: {
-      isSelectable: true
-    },
     gridColumns: [
       {
-        label: "ID",
+        label: "id",
         isSortable: true,
         isFilterable: true,
         isCellEditable: false,
         cellClassNames: "m2-table__cell--large"
       },
       {
-        label: "Name",
+        label: "name",
         isSortable: true,
         isFilterable: true,
         isCellEditable: false
       },
       {
-        label: "Description",
+        label: "description",
         isSortable: false,
         isFilterable: true,
         isCellEditable: true,
         cellClassNames: "m2-table__cell--xl"
       },
       {
-        label: "Date",
+        label: "date",
         isSortable: true,
         isFilterable: false,
         isCellEditable: false
       },
       {
-        label: "Amount",
+        label: "amount",
         isSortable: false,
         isFilterable: false,
         isCellEditable: false,
