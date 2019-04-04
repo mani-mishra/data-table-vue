@@ -195,7 +195,7 @@ export default {
       });
 
       if (sortKey) {
-        data = data.slice().sort(function(a, b) {
+        data = data.slice().sort((a, b) => {
           a = a[sortKey];
           b = b[sortKey];
           return (a === b ? 0 : a > b ? 1 : -1) * order;
@@ -273,8 +273,7 @@ export default {
 
   directives: {
     focus: {
-      // directive definition
-      inserted: function(el) {
+      inserted(el) {
         el.focus();
       }
     }
@@ -319,12 +318,6 @@ $table-sort-icon-size: 10px;
       opacity: 0.7;
       padding-left: 4px;
     }
-    // ::-moz-placeholder { /* Firefox 19+ */
-    //   color: pink;
-    // }
-    // :-ms-input-placeholder { /* IE 10+ */
-    //   color: pink;
-    // }
   }
 
   // header elements

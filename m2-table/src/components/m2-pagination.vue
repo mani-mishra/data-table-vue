@@ -59,7 +59,7 @@ export default {
   },
 
   watch: {
-    currentPage: function(newVal) {
+    currentPage(newVal) {
       this.currentPageNumber = newVal;
     }
   },
