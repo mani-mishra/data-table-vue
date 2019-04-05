@@ -10,7 +10,7 @@
 
 <!-- Add global styles here -->
 <style lang="scss">
-@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,500");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,500,700");
 html {
   font-size: 16px;
   font-weight: 400;
@@ -34,6 +34,13 @@ body {
     color: $color-gray;
     text-transform: uppercase;
   }
+}
+
+.truncate {
+  width: 98%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 // Vue enter/exit transition classes

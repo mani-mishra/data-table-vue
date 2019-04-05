@@ -5,7 +5,7 @@
         @@keyup.enter="searchRows"
         v-model="searchText"
         class="m2-table__search"
-        placeholder="Search Table"
+        placeholder="Search"
       >
       <transition name="fade">
         <button
@@ -22,7 +22,10 @@
       <table class="m2-table">
         <thead class="m2-table__header">
           <tr class="m2-table__header-row">
-            <th v-if="tableProps.isSelectable" class="m2-table__header-checkbox-cell">
+            <th
+              v-if="tableProps.isSelectable"
+              class="m2-table__header-cell m2-table__header-checkbox-cell"
+            >
               <M2Checkbox></M2Checkbox>
             </th>
             <th
@@ -74,42 +77,49 @@
         </thead>
         <tbody class="m2-table__body">
           <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
-            <td v-if="tableProps.isSelectable" class="m2-table__row-checkbox-cell">
+            <td
+              v-if="tableProps.isSelectable"
+              class="m2-table__row-cell m2-table__row-checkbox-cell"
+            >
               <M2Checkbox v-on:checked="row.isSelected = $event"></M2Checkbox>
             </td>
             <td
+              :data-label="column.label"
               class="m2-table__row-cell"
               :class="column.cellClassNames"
               v-for="column in columns"
               :key="column.id"
             >
-              <input
-                v-focus
-                v-if="`${row.id}_${column.id}` === currentEditingCellId"
-                @keyup.enter="saveCellData($event, column, row, rowIndex)"
-                @focusout="currentEditingCellId = ''"
-                class="m2-table__row-cell-input"
-                type="text"
-                :value="row[column.id]"
-              >
-              <div class="m2-table__row-cell-label-container" v-else>
-                <div
-                  class="m2-table__row-cell-label truncate"
-                  :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
-                  :title="row[column.id]"
-                >{{ row[column.id] | runTransforms(column) }}</div>
-                <svg
-                  v-if="column.isCellEditable"
-                  @click="onCellClick(row, column)"
-                  viewBox="0 0 512 512"
-                  width="16px"
-                  height="16px"
-                  class="m2-table__row-cell-edit-icon"
+              <TileSpinner v-if="isSavingCell"></TileSpinner>
+              <div v-else class="m2-table__row-cell-wrapper">
+                <input
+                  v-focus
+                  v-if="`${row.id}_${column.id}` === currentEditingCellId"
+                  @keyup.enter="saveCellData($event, column, row, rowIndex)"
+                  @focusout="currentEditingCellId = ''"
+                  class="m2-table__row-cell-input"
+                  type="text"
+                  :value="row[column.id]"
                 >
-                  <path
-                    d="M64 368v80h80l235.727-235.729-79.999-79.998L64 368zm377.602-217.602c8.531-8.531 8.531-21.334 0-29.865l-50.135-50.135c-8.531-8.531-21.334-8.531-29.865 0l-39.468 39.469 79.999 79.998 39.469-39.467z"
-                  ></path>
-                </svg>
+                <div class="m2-table__row-cell-label-container" v-else>
+                  <div
+                    class="m2-table__row-cell-label truncate"
+                    :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
+                    :title="row[column.id]"
+                  >{{ row[column.id] | runTransforms(column) }}</div>
+                  <svg
+                    v-if="column.isCellEditable"
+                    @click="onCellClick(row, column)"
+                    viewBox="0 0 512 512"
+                    width="16px"
+                    height="16px"
+                    class="m2-table__row-cell-edit-icon"
+                  >
+                    <path
+                      d="M64 368v80h80l235.727-235.729-79.999-79.998L64 368zm377.602-217.602c8.531-8.531 8.531-21.334 0-29.865l-50.135-50.135c-8.531-8.531-21.334-8.531-29.865 0l-39.468 39.469 79.999 79.998 39.469-39.467z"
+                    ></path>
+                  </svg>
+                </div>
               </div>
             </td>
           </tr>
@@ -129,12 +139,15 @@
 <script>
 import M2Pagination from "@/components/m2-pagination.vue";
 import M2Checkbox from "@/components/m2-checkbox.vue";
+import TileSpinner from "@/components/spinner.vue";
+import { mapGetters } from "vuex";
 
 export default {
   name: "M2Table",
   components: {
     M2Pagination,
-    M2Checkbox
+    M2Checkbox,
+    TileSpinner
   },
 
   props: {
@@ -183,6 +196,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters(["isLoading"]),
+
     hasSelectedElements() {
       return this.paginatedRows.some(row => row.isSelected);
     },
@@ -232,6 +247,10 @@ export default {
         });
       }
       return data;
+    },
+
+    isSavingCell() {
+      return this.isLoading;
     }
   },
 
@@ -243,7 +262,6 @@ export default {
     },
 
     saveCellData(event, column, row) {
-      this.currentEditingCellId = "";
       const oldValue = row[column.id];
       const newValue = event.target.value;
       if (oldValue !== newValue) {
@@ -316,22 +334,6 @@ export default {
 $table-width: 80%;
 $table-cell-width: 20%;
 $table-sort-icon-size: 10px;
-
-.truncate {
-  width: 90%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-@media (min-width: 900px) {
-  // .truncate {
-  //   width: 90%;
-  //   white-space: nowrap;
-  //   overflow: hidden;
-  //   text-overflow: ellipsis;
-  // }
-}
 
 .m2-table {
   border-collapse: collapse;
@@ -468,6 +470,7 @@ $table-sort-icon-size: 10px;
 
   &__row-cell {
     padding: 5px 0 0 5px;
+    border-bottom: 1px solid $color-border;
     text-align: left;
     &--editable {
       width: 85%;
@@ -493,8 +496,8 @@ $table-sort-icon-size: 10px;
 
   &__row-cell-input {
     font-size: 0.9rem;
-    width: 90%;
-    height: 30px;
+    width: 85%;
+    height: 100%;
     color: $color-secondary;
   }
 
@@ -530,7 +533,9 @@ $table-sort-icon-size: 10px;
 }
 
 $breakpoint-a: 1100px;
-@media (max-width: $breakpoint-a) {
+$breakpoint-b: 768px;
+
+@media (min-width: $breakpoint-b) and (max-width: $breakpoint-a) {
   $table-cell-width--a: 160px;
   .m2-table-container {
     overflow-x: auto;
@@ -553,6 +558,118 @@ $breakpoint-a: 1100px;
 
       &--xl {
         width: #{$table-cell-width--a * 2};
+      }
+    }
+  }
+}
+@media screen and (max-width: $breakpoint-b) {
+  $margin-between-blocks: 15px;
+  $cell-height: 60px;
+  .m2-table {
+    .truncate {
+      width: auto;
+    }
+
+    &__header {
+      display: block;
+      margin-bottom: $margin-between-blocks;
+    }
+
+    &__header-row {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      border-left: 1px solid $color-border;
+      border-right: 1px solid $color-border;
+    }
+
+    &__header-cell {
+      width: auto;
+      height: $cell-height;
+      border-bottom: 1px solid $color-border;
+    }
+
+    &__header-filter {
+      justify-content: space-between;
+      align-items: unset;
+    }
+
+    &__header-label {
+      margin-top: 10px;
+    }
+
+    &__header-sort-icon {
+      margin-top: 10px;
+      margin-left: 0;
+      margin-right: 10px;
+    }
+
+    &__row {
+      display: block;
+      border-left: 1px solid $color-border;
+      border-right: 1px solid $color-border;
+      border-bottom: 3px solid $color-border;
+      margin-bottom: $margin-between-blocks;
+    }
+
+    &__row-cell-wrapper {
+      display: flex;
+    }
+
+    &__row-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      width: auto;
+      height: $cell-height;
+      padding-left: 10px;
+      &::before {
+        content: attr(data-label);
+        font-weight: 700;
+        font-size: 1rem;
+      }
+    }
+
+    &__row-cell-input {
+      width: 100%;
+      margin-right: 8px;
+    }
+
+    &__row-checkbox-cell {
+      display: flex;
+      justify-content: center;
+    }
+
+    &__row-cell-label {
+      padding: 0px;
+      //height: 40px;
+    }
+
+    &__row-cell-label-container {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    &__row-cell-edit-icon {
+      margin-right: 10px;
+    }
+
+    &__cell {
+      &--xs {
+        width: auto;
+      }
+
+      &--small {
+        width: auto;
+      }
+
+      &--large {
+        width: auto;
+      }
+
+      &--xl {
+        width: auto;
       }
     }
   }

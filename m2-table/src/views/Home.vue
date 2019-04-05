@@ -1,9 +1,9 @@
 <template>
-  <div v-if="payments.length" class="page">
+  <TileSpinner v-if="isLoading"></TileSpinner>
+  <div v-else class="page">
     <h1 class="page__header">Payments</h1>
     <m2-table :model="payments" :columnDefs="gridColumns"></m2-table>
   </div>
-  <TileSpinner v-else></TileSpinner>
 </template>
 
 <script>
@@ -24,7 +24,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["payments"])
+    ...mapGetters(["payments", "isLoading"])
   },
 
   data: () => ({
