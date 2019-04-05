@@ -36,7 +36,7 @@ export default new Vuex.Store({
       return firebase
         .database()
         .ref()
-        .once("value", snapshot => {
+        .on("value", snapshot => {
           context.commit("setPayments", snapshot.val());
           context.commit("setLoading", false);
         });

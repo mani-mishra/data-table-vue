@@ -1,8 +1,10 @@
 <template>
-  <TileSpinner v-if="isLoading"></TileSpinner>
-  <div v-else class="page">
-    <h1 class="page__header">Payments</h1>
-    <m2-table :model="payments" :columnDefs="gridColumns"></m2-table>
+  <div>
+    <TileSpinner v-if="isLoading"></TileSpinner>
+    <div class="page">
+      <h1 class="page__header">Payments</h1>
+      <m2-table :model="payments" :columnDefs="gridColumns"></m2-table>
+    </div>
   </div>
 </template>
 

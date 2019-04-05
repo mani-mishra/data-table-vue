@@ -1,9 +1,5 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Demo</router-link>|
-      <router-link to="/about">description</router-link>
-    </div>-->
     <router-view/>
   </div>
 </template>
@@ -18,8 +14,9 @@ html {
 
 body {
   font-family: "Open Sans", sans-serif;
-  // color: $color-white;
-  // background-color: $color-black;
+  position: relative;
+  min-height: 100%;
+  top: 0px;
 }
 
 * {

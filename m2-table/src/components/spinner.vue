@@ -29,6 +29,9 @@ export default {
 
 <style scoped lang="scss">
 .spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   display: flex;
   justify-content: space-between;
   margin: 100px auto;

@@ -90,13 +90,12 @@
               v-for="column in columns"
               :key="column.id"
             >
-              <TileSpinner v-if="isSavingCell"></TileSpinner>
-              <!-- @focusout="currentEditingCellId = ''" -->
-              <div v-else class="m2-table__row-cell-wrapper">
+              <div class="m2-table__row-cell-wrapper">
                 <input
                   v-focus
                   v-if="`${row.id}_${column.id}` === currentEditingCellId"
                   @keyup.enter="saveCellData($event, column, row, rowIndex)"
+                  @focusout="currentEditingCellId = ''"
                   class="m2-table__row-cell-input"
                   type="text"
                   :value="row[column.id]"
@@ -262,6 +261,7 @@ export default {
     },
 
     saveCellData(event, column, row) {
+      this.currentEditingCellId = "";
       const oldValue = row[column.id];
       const newValue = event.target.value;
       if (oldValue !== newValue) {
@@ -470,6 +470,9 @@ $table-row-cell-height: 50px;
   // row elements
   &__row {
     border-top: 1px solid $color-border;
+    &:nth-child(even) {
+      background-color: $color-gray--alpha;
+    }
   }
 
   &__row-cell {
