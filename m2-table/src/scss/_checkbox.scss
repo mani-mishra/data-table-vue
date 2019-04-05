@@ -1,0 +1,37 @@
+.m2-checkbox {
+  display: none;
+
+  &:checked {
+    + .m2-checkbox__label:before {
+      background-color: $color-border;
+      border-color: $color-gray;
+      color: $color-black;
+    }
+  }
+
+  &__label {
+    display: block;
+    margin: 0.2em;
+    cursor: pointer;
+    padding: 0.2em;
+
+    &:active:before {
+      transform: scale(0);
+    }
+
+    &:before {
+      content: "\2714";
+      border: 0.1em solid $color-ternary;
+      border-radius: 0.2em;
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      padding-left: 0.2em;
+      padding-bottom: 0.3em;
+      margin-right: 0.2em;
+      vertical-align: bottom;
+      color: transparent;
+      transition: 0.2s;
+    }
+  }
+}

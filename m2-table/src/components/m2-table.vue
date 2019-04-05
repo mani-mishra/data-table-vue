@@ -23,8 +23,14 @@
         <thead class="m2-table__header">
           <tr class="m2-table__header-row">
             <th v-if="tableProps.isSelectable" class="header-cell header-cell--checkbox">
-              <input id="select-all" type="checkbox" @click="onSelectAll" v-model="isSelectAll">
-              <label for="select-all"></label>
+              <input
+                id="select-all"
+                type="checkbox"
+                class="m2-checkbox"
+                @click="onSelectAll"
+                v-model="isSelectAll"
+              >
+              <label for="select-all" class="m2-checkbox__label"></label>
             </th>
             <th
               v-for="column in columns"
@@ -84,12 +90,13 @@
             >
               <input
                 type="checkbox"
+                class="m2-checkbox"
                 :id="row.id"
                 :value="row.id"
                 v-model="selectedRows"
                 @change="updateSelectall()"
               >
-              <label :for="row.id"></label>
+              <label :for="row.id" class="m2-checkbox__label"></label>
             </td>
             <td
               :data-label="column.label"
