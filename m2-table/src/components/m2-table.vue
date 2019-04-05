@@ -91,12 +91,12 @@
               :key="column.id"
             >
               <TileSpinner v-if="isSavingCell"></TileSpinner>
+              <!-- @focusout="currentEditingCellId = ''" -->
               <div v-else class="m2-table__row-cell-wrapper">
                 <input
                   v-focus
                   v-if="`${row.id}_${column.id}` === currentEditingCellId"
                   @keyup.enter="saveCellData($event, column, row, rowIndex)"
-                  @focusout="currentEditingCellId = ''"
                   class="m2-table__row-cell-input"
                   type="text"
                   :value="row[column.id]"
@@ -335,6 +335,7 @@ $table-width: 80%;
 $table-cell-width: 20%;
 $table-sort-icon-size: 10px;
 $table-checkbox-column-width: 50px;
+$table-row-cell-height: 50px;
 
 // styles for default resolution
 .header-cell {
@@ -472,12 +473,16 @@ $table-checkbox-column-width: 50px;
   }
 
   &__row-cell {
-    padding: 5px 0 0 5px;
+    height: $table-row-cell-height;
     border-bottom: 1px solid $color-border;
     text-align: left;
     &--editable {
       width: 85%;
     }
+  }
+
+  &__row-cell-wrapper {
+    height: 100%;
   }
 
   &__row-cell-label {
@@ -490,13 +495,16 @@ $table-checkbox-column-width: 50px;
     cursor: pointer;
   }
   &__row-cell-label-container {
+    height: 100%;
     display: flex;
+    align-items: center;
   }
 
   &__row-cell-input {
     font-size: 0.9rem;
     width: 85%;
     height: 100%;
+    border-radius: 4px;
     color: $color-secondary;
   }
 
@@ -635,6 +643,7 @@ $breakpoint-b: 768px;
 
     &__row-cell-input {
       width: 100%;
+      height: unset;
       margin-right: 8px;
     }
 
