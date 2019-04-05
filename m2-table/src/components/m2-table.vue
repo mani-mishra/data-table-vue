@@ -127,7 +127,7 @@ export default {
 
   props: {
     tableProps: {
-      typpe: Object,
+      type: Object,
       default: () => ({
         itemsPerPage: 10,
         isPaginated: true,
