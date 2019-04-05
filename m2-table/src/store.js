@@ -21,35 +21,35 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    setPayments: (state, payload = []) => {
+    SET_PAYMENTS: (state, payload = []) => {
       state.payments = Object.values(payload);
     },
 
-    setLoading: (state, payload = false) => {
+    SET_LOADING: (state, payload = false) => {
       state.loading = payload;
     }
   },
 
   actions: {
     getPayments: async context => {
-      context.commit("setLoading", true);
+      context.commit("SET_LOADING", true);
       return firebase
         .database()
         .ref()
         .on("value", snapshot => {
-          context.commit("setPayments", snapshot.val());
-          context.commit("setLoading", false);
+          context.commit("SET_PAYMENTS", snapshot.val());
+          context.commit("SET_LOADING", false);
         });
     },
 
     updatePayments: async (context, { row }) => {
-      context.commit("setLoading", true);
+      context.commit("SET_LOADING", true);
       return firebase
         .database()
         .ref(row.id)
         .set(row)
         .then(() => {
-          context.commit("setLoading", false);
+          context.commit("SET_LOADING", false);
           console.log("Updated payments data successfully.");
         })
         .catch(error => {
