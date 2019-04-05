@@ -7,15 +7,15 @@
         class="m2-table__search"
         placeholder="Search"
       >
+
+      <button class="m2-table__actions-button">{{selectedRows.length}} row(s) selected</button>
+
       <transition name="fade">
         <button
           v-if="hasActiveFilters"
           @click="resetFilters"
-          class="m2-table__reset-filters"
+          class="m2-table__actions-button m2-table__reset-filters"
         >Reset Filters</button>
-      </transition>
-      <transition name="fade">
-        <button v-if="hasSelectedElements" class="m2-table__reset-filters">Reset Filters</button>
       </transition>
     </div>
     <div class="m2-table-container">
@@ -23,7 +23,8 @@
         <thead class="m2-table__header">
           <tr class="m2-table__header-row">
             <th v-if="tableProps.isSelectable" class="header-cell header-cell--checkbox">
-              <M2Checkbox></M2Checkbox>
+              <input id="select-all" type="checkbox" @click="onSelectAll" v-model="isSelectAll">
+              <label for="select-all"></label>
             </th>
             <th
               v-for="column in columns"
@@ -81,7 +82,14 @@
               v-if="tableProps.isSelectable"
               class="m2-table__row-cell m2-table__row-checkbox-cell"
             >
-              <M2Checkbox v-on:checked="row.isSelected = $event"></M2Checkbox>
+              <input
+                type="checkbox"
+                :id="row.id"
+                :value="row.id"
+                v-model="selectedRows"
+                @change="updateSelectall()"
+              >
+              <label :for="row.id"></label>
             </td>
             <td
               :data-label="column.label"
@@ -137,7 +145,6 @@
 
 <script>
 import M2Pagination from "@/components/m2-pagination.vue";
-import M2Checkbox from "@/components/m2-checkbox.vue";
 import TileSpinner from "@/components/spinner.vue";
 import { mapGetters } from "vuex";
 
@@ -145,7 +152,6 @@ export default {
   name: "M2Table",
   components: {
     M2Pagination,
-    M2Checkbox,
     TileSpinner
   },
 
@@ -154,8 +160,7 @@ export default {
       type: Object,
       default: () => ({
         itemsPerPage: 10,
-        isPaginated: true,
-        isSelectable: true
+        isPaginated: true
       })
     },
 
@@ -173,7 +178,7 @@ export default {
   data() {
     const sortOrders = {};
     const columns = [...this.columnDefs];
-    //columns.unshift();
+
     columns.forEach(column => {
       if (column.isSortable) {
         sortOrders[column.id] = 1;
@@ -190,16 +195,14 @@ export default {
       sortKey: "",
       searchText: "",
       currentEditingCellId: "",
-      page: 1
+      page: 1,
+      isSelectAll: false,
+      selectedRows: []
     };
   },
 
   computed: {
     ...mapGetters(["isLoading"]),
-
-    hasSelectedElements() {
-      return this.paginatedRows.some(row => row.isSelected);
-    },
 
     hasActiveFilters() {
       return this.searchText || this.columns.some(col => col.filterText);
@@ -220,6 +223,7 @@ export default {
       const searchText = this.searchText && this.searchText.toLowerCase();
       const order = this.sortOrders[sortKey] || 1;
       const columns = this.columns;
+
       let data = this.model;
       if (searchText) {
         data = data.filter(row => {
@@ -245,15 +249,26 @@ export default {
           return (a === b ? 0 : a > b ? 1 : -1) * order;
         });
       }
-      return data;
-    },
 
-    isSavingCell() {
-      return this.isLoading;
+      return data;
     }
   },
 
   methods: {
+    onSelectAll() {
+      this.isSelectAll = !this.isSelectAll;
+      this.selectedRows = [];
+      if (this.isSelectAll) {
+        this.paginatedRows.forEach(row => {
+          this.selectedRows.push(row.id);
+        });
+      }
+    },
+
+    updateSelectall() {
+      this.isSelectAll = this.selectedRows.length == this.paginatedRows.length;
+    },
+
     onCellClick(row, column) {
       if (column.isCellEditable) {
         this.currentEditingCellId = `${row.id}_${column.id}`;
@@ -496,6 +511,7 @@ $table-row-cell-height: 50px;
   &__row-cell-edit-icon {
     vertical-align: middle;
     cursor: pointer;
+    color: $color-gray;
   }
   &__row-cell-label-container {
     height: 100%;
@@ -509,6 +525,11 @@ $table-row-cell-height: 50px;
     height: 100%;
     border-radius: 4px;
     color: $color-secondary;
+  }
+
+  &__row-checkbox-cell {
+    display: flex;
+    justify-content: center;
   }
 
   &__cell {
@@ -529,7 +550,7 @@ $table-row-cell-height: 50px;
     }
   }
 
-  &__reset-filters {
+  &__actions-button {
     color: $color-white;
     background-color: $color-ternary;
     border-radius: 3px;

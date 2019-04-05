@@ -5,6 +5,7 @@ module.exports = {
       sass: {
         data: `
               @import "@/scss/_variables.scss";
+              @import "@/scss/_checkbox.scss";
             `
       }
     }

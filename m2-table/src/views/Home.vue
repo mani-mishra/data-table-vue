@@ -3,7 +3,7 @@
     <TileSpinner v-if="isLoading"></TileSpinner>
     <div class="page">
       <h1 class="page__header">Payments</h1>
-      <m2-table :model="payments" :columnDefs="gridColumns"></m2-table>
+      <m2-table :tableProps="tapbleProps" :model="payments" :columnDefs="gridColumns"></m2-table>
     </div>
   </div>
 </template>
@@ -30,6 +30,28 @@ export default {
   },
 
   data: () => ({
+    tapbleProps: {
+      itemsPerPage: 10,
+      isPaginated: true,
+      isSelectable: true,
+      rowActions: [
+        {
+          id: "ACTION_A",
+          name: "action a",
+          callback(row) {
+            console.log(row);
+          }
+        },
+        {
+          id: "ACTION_B",
+          name: "action b",
+          callback(row) {
+            console.log(row);
+          }
+        }
+      ]
+    },
+
     gridColumns: [
       // {
       //   id: "id",
