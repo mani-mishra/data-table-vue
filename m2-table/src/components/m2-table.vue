@@ -14,11 +14,17 @@
           class="m2-table__reset-filters"
         >Reset Filters</button>
       </transition>
+      <transition name="fade">
+        <button v-if="hasSelectedElements" class="m2-table__reset-filters">Reset Filters</button>
+      </transition>
     </div>
     <div class="m2-table-container">
       <table class="m2-table">
         <thead class="m2-table__header">
           <tr class="m2-table__header-row">
+            <th v-if="tableProps.isSelectable" class="m2-table__header-checkbox-cell">
+              <M2Checkbox></M2Checkbox>
+            </th>
             <th
               v-for="column in columns"
               :class="[
@@ -68,6 +74,9 @@
         </thead>
         <tbody class="m2-table__body">
           <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
+            <td v-if="tableProps.isSelectable" class="m2-table__row-checkbox-cell">
+              <M2Checkbox v-on:checked="row.isSelected = $event"></M2Checkbox>
+            </td>
             <td
               class="m2-table__row-cell"
               :class="column.cellClassNames"
@@ -107,10 +116,13 @@
 
 <script>
 import M2Pagination from "@/components/m2-pagination.vue";
+import M2Checkbox from "@/components/m2-checkbox.vue";
+
 export default {
   name: "M2Table",
   components: {
-    M2Pagination
+    M2Pagination,
+    M2Checkbox
   },
 
   props: {
@@ -118,7 +130,8 @@ export default {
       typpe: Object,
       default: () => ({
         itemsPerPage: 10,
-        isPaginated: true
+        isPaginated: true,
+        isSelectable: true
       })
     },
 
@@ -136,6 +149,7 @@ export default {
   data() {
     const sortOrders = {};
     const columns = [...this.columnDefs];
+    //columns.unshift();
     columns.forEach(column => {
       if (column.isSortable) {
         sortOrders[column.id] = 1;
@@ -157,6 +171,10 @@ export default {
   },
 
   computed: {
+    hasSelectedElements() {
+      return this.paginatedRows.some(row => row.isSelected);
+    },
+
     hasActiveFilters() {
       return this.searchText || this.columns.some(col => col.filterText);
     },
@@ -283,11 +301,24 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-$table-cell-width: 100px;
+$table-width: 80%;
+$table-cell-width: 20%;
 $table-sort-icon-size: 10px;
 
-.m2-table-container {
-  overflow-x: auto;
+.truncate {
+  width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 900px) {
+  // .truncate {
+  //   width: 90%;
+  //   white-space: nowrap;
+  //   overflow: hidden;
+  //   text-overflow: ellipsis;
+  // }
 }
 
 .m2-table {
@@ -297,9 +328,6 @@ $table-sort-icon-size: 10px;
   width: 100%;
   overflow: auto;
   table-layout: fixed;
-
-  box-shadow: inset 0px 2px 2px rgba(255, 255, 255, 0.1),
-    0 1px 2px rgba(0, 0, 0, 0.2);
 
   &__actions {
     display: flex;
@@ -332,7 +360,6 @@ $table-sort-icon-size: 10px;
   }
 
   &__header-cell {
-    min-width: $table-cell-width;
     width: $table-cell-width;
     padding: 2px 10px;
     text-align: left;
@@ -349,6 +376,10 @@ $table-sort-icon-size: 10px;
         opacity: 1;
       }
     }
+  }
+
+  &__header-checkbox-cell {
+    width: 30px;
   }
 
   &__header-filter {
@@ -431,9 +462,13 @@ $table-sort-icon-size: 10px;
     }
   }
 
+  &__row-checkbox-cell {
+    width: 30px;
+  }
+
   &__row-cell-label {
     padding: 5px;
-    height: 40px;
+    //height: 40px;
   }
 
   &__row-cell-input {
@@ -445,22 +480,18 @@ $table-sort-icon-size: 10px;
 
   &__cell {
     &--xs {
-      min-width: #{$table-cell-width * 0.5};
       width: #{$table-cell-width * 0.5};
     }
 
     &--small {
-      min-width: #{$table-cell-width * 0.75};
       width: #{$table-cell-width * 0.75};
     }
 
     &--large {
-      min-width: #{$table-cell-width * 1.25};
       width: #{$table-cell-width * 1.25};
     }
 
     &--xl {
-      min-width: #{$table-cell-width * 2};
       width: #{$table-cell-width * 2};
     }
   }
@@ -476,12 +507,34 @@ $table-sort-icon-size: 10px;
     transition: display 0s linear 0.33s, opacity 0.33s linear;
     cursor: pointer;
   }
+}
 
-  .truncate {
-    width: 90%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+$breakpoint-a: 1100px;
+@media (max-width: $breakpoint-a) {
+  $table-cell-width--a: 160px;
+  .m2-table-container {
+    overflow-x: auto;
+  }
+
+  .m2-table {
+    width: $breakpoint-a;
+    &__cell {
+      &--xs {
+        width: #{$table-cell-width--a * 0.5};
+      }
+
+      &--small {
+        width: #{$table-cell-width--a * 0.75};
+      }
+
+      &--large {
+        width: #{$table-cell-width--a * 1.25};
+      }
+
+      &--xl {
+        width: #{$table-cell-width--a * 2};
+      }
+    }
   }
 }
 </style>

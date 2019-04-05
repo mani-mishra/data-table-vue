@@ -29,14 +29,14 @@ export default {
 
   data: () => ({
     gridColumns: [
-      {
-        id: "id",
-        label: "UUID",
-        isSortable: true,
-        isFilterable: true,
-        isCellEditable: false,
-        cellClassNames: "m2-table__cell--large"
-      },
+      // {
+      //   id: "id",
+      //   label: "UUID",
+      //   isSortable: true,
+      //   isFilterable: true,
+      //   isCellEditable: false,
+      //   cellClassNames: "m2-table__cell--large"
+      // },
       {
         id: "name",
         label: "Name",
