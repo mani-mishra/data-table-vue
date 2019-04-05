@@ -22,52 +22,52 @@
       <table class="m2-table">
         <thead class="m2-table__header">
           <tr class="m2-table__header-row">
-            <th
-              v-if="tableProps.isSelectable"
-              class="m2-table__header-cell m2-table__header-checkbox-cell"
-            >
+            <th v-if="tableProps.isSelectable" class="header-cell header-cell--checkbox">
               <M2Checkbox></M2Checkbox>
             </th>
             <th
               v-for="column in columns"
               :class="[
-              { 'm2-table__header-cell--active': sortKey == column.id },
+              { 'header-cell--active': sortKey == column.id },
               column.cellClassNames
             ]"
               :key="column.id"
-              class="m2-table__header-cell"
+              class="header-cell"
             >
-              <div class="m2-table__header-filter">
-                <div class="m2-table__header-filter-text">
+              <div class="header-cell__content">
+                <div class="header-cell__name-wrapper">
                   <div
-                    v-if="column.filterText || column.isEditing"
-                    class="m2-table__header-filter-label"
+                    v-if="column.isEditing || column.filterText"
+                    class="header-cell__name--mini"
                   >{{ column.label }}</div>
+
                   <input
                     v-if="column.isEditing"
                     v-focus
                     @keyup.enter="filterRows($event, column)"
                     @blur="filterRows($event, column)"
                     :value="column.filterText"
-                    class="m2-table__header-filter-input"
+                    class="header-cell__input"
                     type="text"
                   >
                   <div
                     v-else
                     @click="onColumnHeaderClick(column)"
-                    class="m2-table__header-label"
+                    class="header-cell__name"
                     :class="{
-                    'm2-table__header-label--filterable': column.isFilterable
+                    'header-cell__name--filterable': column.isFilterable,
+                    'header-cell__name--active': column.isEditing || column.filterText
                   }"
                   >{{ column.filterText || column.label }}</div>
                 </div>
+
                 <div
                   v-if="column.isSortable"
-                  class="m2-table__header-sort-icon"
+                  class="header-cell__sort-icon"
                   :class="
                   sortOrders[column.id] > 0
-                    ? 'm2-table__header-sort-icon--asc'
-                    : 'm2-table__header-sort-icon--desc'
+                    ? 'header-cell__sort-icon--asc'
+                    : 'header-cell__sort-icon--desc'
                 "
                   @click="sortBy(column)"
                 ></div>
@@ -334,6 +334,93 @@ export default {
 $table-width: 80%;
 $table-cell-width: 20%;
 $table-sort-icon-size: 10px;
+$table-checkbox-column-width: 50px;
+
+// styles for default resolution
+.header-cell {
+  width: $table-cell-width;
+  padding: 2px 10px;
+  text-align: left;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  &--active {
+    color: $color-white;
+
+    .header-cell__sort-icon {
+      opacity: 1;
+    }
+  }
+
+  &--checkbox {
+    width: $table-checkbox-column-width;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__name-wrapper {
+    width: 85%;
+  }
+
+  &__name {
+    width: 85%;
+    border: none;
+    outline: none;
+    padding: 3px;
+
+    &--filterable {
+      cursor: pointer;
+      &:hover {
+        border-radius: 3px;
+        border: 1px solid $color-border;
+      }
+    }
+
+    &--mini {
+      font-size: 0.8rem;
+      font-weight: 700;
+      opacity: 0.7;
+    }
+  }
+
+  &__input {
+    width: 85%;
+    height: 30px;
+    border-radius: 4px;
+    font-weight: 500;
+    border: 1px solid $color-border;
+    background-color: $color-primary;
+    color: $color-white;
+  }
+
+  &__sort-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    opacity: 0.5;
+    cursor: pointer;
+
+    &--desc {
+      border-left: $table-sort-icon-size solid transparent;
+      border-right: $table-sort-icon-size solid transparent;
+      border-top: $table-sort-icon-size solid $color-white;
+    }
+
+    &--asc {
+      border-left: $table-sort-icon-size solid transparent;
+      border-right: $table-sort-icon-size solid transparent;
+      border-bottom: $table-sort-icon-size solid $color-white;
+    }
+  }
+}
 
 .m2-table {
   border-collapse: collapse;
@@ -373,90 +460,6 @@ $table-sort-icon-size: 10px;
     height: 60px;
   }
 
-  &__header-cell {
-    width: $table-cell-width;
-    padding: 2px 10px;
-    text-align: left;
-
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
-    &--active {
-      color: $color-white;
-
-      .m2-table__header-sort-icon {
-        opacity: 1;
-      }
-    }
-  }
-
-  &__header-checkbox-cell {
-    width: 30px;
-  }
-
-  &__header-filter {
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-
-  &__header-filter-text {
-    width: 85%;
-  }
-
-  &__header-filter-label {
-    font-size: 0.8rem;
-    font-weight: 500;
-    opacity: 0.7;
-  }
-
-  &__header-filter-input {
-    width: 85%;
-    height: 25px;
-    border-radius: 4px;
-    font-weight: 500;
-    border: 1px solid $color-border;
-    background-color: $color-primary;
-    color: $color-white;
-  }
-
-  &__header-label {
-    width: 85%;
-    border: none;
-    outline: none;
-    padding: 3px;
-    &--filterable {
-      cursor: pointer;
-      &:hover {
-        border-radius: 3px;
-        border: 1px solid $color-border;
-      }
-    }
-  }
-
-  &__header-sort-icon {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 5px;
-    opacity: 0.5;
-    cursor: pointer;
-
-    &--desc {
-      border-left: $table-sort-icon-size solid transparent;
-      border-right: $table-sort-icon-size solid transparent;
-      border-top: $table-sort-icon-size solid $color-white;
-    }
-
-    &--asc {
-      border-left: $table-sort-icon-size solid transparent;
-      border-right: $table-sort-icon-size solid transparent;
-      border-bottom: $table-sort-icon-size solid $color-white;
-    }
-  }
-
   &__body {
     width: 100%;
     background-color: $color-white;
@@ -475,10 +478,6 @@ $table-sort-icon-size: 10px;
     &--editable {
       width: 85%;
     }
-  }
-
-  &__row-checkbox-cell {
-    width: 30px;
   }
 
   &__row-cell-label {
@@ -565,6 +564,31 @@ $breakpoint-b: 768px;
 @media screen and (max-width: $breakpoint-b) {
   $margin-between-blocks: 15px;
   $cell-height: 60px;
+
+  .header-cell {
+    width: auto;
+    height: $cell-height;
+    border-bottom: 1px solid $color-border;
+
+    &__content {
+      justify-content: space-between;
+      align-items: unset;
+    }
+
+    &__name {
+      margin-top: 10px;
+      &--active {
+        margin: 0;
+      }
+    }
+
+    &__sort-icon {
+      margin-top: 10px;
+      margin-left: 0;
+      margin-right: 10px;
+    }
+  }
+
   .m2-table {
     .truncate {
       width: auto;
@@ -581,27 +605,6 @@ $breakpoint-b: 768px;
       height: auto;
       border-left: 1px solid $color-border;
       border-right: 1px solid $color-border;
-    }
-
-    &__header-cell {
-      width: auto;
-      height: $cell-height;
-      border-bottom: 1px solid $color-border;
-    }
-
-    &__header-filter {
-      justify-content: space-between;
-      align-items: unset;
-    }
-
-    &__header-label {
-      margin-top: 10px;
-    }
-
-    &__header-sort-icon {
-      margin-top: 10px;
-      margin-left: 0;
-      margin-right: 10px;
     }
 
     &__row {
