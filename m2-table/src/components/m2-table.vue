@@ -626,6 +626,10 @@ $breakpoint-b: 768px;
       margin-left: 0;
       margin-right: 10px;
     }
+    &--checkbox {
+      display: flex;
+      align-items: center;
+    }
   }
 
   .m2-table {
