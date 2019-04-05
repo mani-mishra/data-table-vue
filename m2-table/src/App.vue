@@ -48,4 +48,9 @@ body {
 .fade-leave-to {
   opacity: 0;
 }
+
+.slide-enter,
+.slide-leave-to {
+  transform: scaleY(0);
+}
 </style>

@@ -1,22 +1,35 @@
 <template>
-  <div>
+  <div @click="isDropdownOpen = false">
     <div class="m2-table__actions">
-      <input
-        @@keyup.enter="searchRows"
-        v-model="searchText"
-        class="m2-table__search"
-        placeholder="Search"
-      >
-
-      <button class="m2-table__actions-button">{{selectedRows.length}} row(s) selected</button>
+      <button
+        class="m2-table__actions-item m2-table__actions-button"
+        @click.stop="toggleDropdown"
+        :class="{'m2-table__actions-button--disabled':!selectedRows.length}"
+      >{{selectedRows.length}} row(s) selected</button>
+      <transition name="slide">
+        <ul v-if="isDropdownOpen" class="m2-table__dropdown-list">
+          <li
+            class="m2-table__dropdown-list-items"
+            v-for="action in tableProps.rowActions"
+            :key="action.id"
+            @click="onActionClick(action)"
+          >{{action.name}}</li>
+        </ul>
+      </transition>
 
       <transition name="fade">
         <button
           v-if="hasActiveFilters"
           @click="resetFilters"
-          class="m2-table__actions-button m2-table__reset-filters"
+          class="m2-table__actions-item m2-table__actions-button"
         >Reset Filters</button>
       </transition>
+      <input
+        @@keyup.enter="searchRows"
+        v-model="searchText"
+        class="m2-table__actions-item m2-table__search"
+        placeholder="Search"
+      >
     </div>
     <div class="m2-table-container">
       <table class="m2-table">
@@ -204,6 +217,7 @@ export default {
       currentEditingCellId: "",
       page: 1,
       isSelectAll: false,
+      isDropdownOpen: false,
       selectedRows: []
     };
   },
@@ -262,6 +276,13 @@ export default {
   },
 
   methods: {
+    onActionClick(action) {
+      this.isDropdownOpen = false;
+      if (typeof action.handler === "function") {
+        action.handler(this.selectedRows);
+      }
+    },
+
     onSelectAll() {
       this.isSelectAll = !this.isSelectAll;
       this.selectedRows = [];
@@ -328,6 +349,12 @@ export default {
       });
       this.page = 1;
       this.searchText = "";
+    },
+
+    toggleDropdown() {
+      if (this.selectedRows.length) {
+        this.isDropdownOpen = !this.isDropdownOpen;
+      }
     }
   },
 
@@ -364,10 +391,6 @@ $table-row-cell-height: 50px;
   width: $table-cell-width;
   padding: 2px 10px;
   text-align: left;
-
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 
   &--active {
@@ -458,6 +481,26 @@ $table-row-cell-height: 50px;
     justify-content: space-between;
     height: 35px;
     margin-bottom: 10px;
+  }
+
+  &__dropdown-list {
+    position: absolute;
+    width: 200px;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    transform-origin: top;
+    transition: transform 0.4s ease-in-out;
+    overflow: hidden;
+    top: 100px;
+    z-index: 2;
+  }
+  &__dropdown-list-items {
+    cursor: pointer;
+    padding: 10px;
+    background-color: $color-white;
+    border-bottom: 1px solid $color-border;
+    border-left: 3px solid $color-border;
   }
 
   &__search {
@@ -567,6 +610,13 @@ $table-row-cell-height: 50px;
       0 1px 2px rgba(0, 0, 0, 0.2);
     transition: display 0s linear 0.33s, opacity 0.33s linear;
     cursor: pointer;
+
+    &--disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      outline: none;
+      user-select: none;
+    }
   }
 }
 
@@ -635,6 +685,17 @@ $breakpoint-b: 768px;
   .m2-table {
     .truncate {
       width: auto;
+    }
+
+    &__actions {
+      height: 100%;
+      flex-direction: column;
+    }
+
+    &__actions-item {
+      height: 40px;
+      width: 100%;
+      margin-bottom: 5px;
     }
 
     &__header {

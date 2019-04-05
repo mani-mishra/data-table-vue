@@ -36,17 +36,27 @@ export default {
       isSelectable: true,
       rowActions: [
         {
-          id: "ACTION_A",
-          name: "action a",
-          callback(row) {
-            console.log(row);
+          id: "DELETE",
+          name: "Delete",
+          handler(data) {
+            console.log(data);
+            alert("Delete Action is performed");
           }
         },
         {
-          id: "ACTION_B",
-          name: "action b",
-          callback(row) {
-            console.log(row);
+          id: "EXPORT_CSV",
+          name: "Export as CSV",
+          handler(data) {
+            console.log(data);
+            alert("Export as CSV Action is performed");
+          }
+        },
+        {
+          id: "EXPORT_JSON",
+          name: "Export as JSON",
+          handler(data) {
+            console.log(data);
+            alert("Export as JSON is performed");
           }
         }
       ]
