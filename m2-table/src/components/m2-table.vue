@@ -92,13 +92,25 @@
                 type="text"
                 :value="row[column.id]"
               >
-              <div
-                v-else
-                @click="onCellClick(row, column)"
-                class="m2-table__row-cell-label truncate"
-                :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
-                :title="row[column.id]"
-              >{{ row[column.id] | runTransforms(column) }}</div>
+              <div class="m2-table__row-cell-label-container" v-else>
+                <div
+                  class="m2-table__row-cell-label truncate"
+                  :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
+                  :title="row[column.id]"
+                >{{ row[column.id] | runTransforms(column) }}</div>
+                <svg
+                  v-if="column.isCellEditable"
+                  @click="onCellClick(row, column)"
+                  viewBox="0 0 512 512"
+                  width="16px"
+                  height="16px"
+                  class="m2-table__row-cell-edit-icon"
+                >
+                  <path
+                    d="M64 368v80h80l235.727-235.729-79.999-79.998L64 368zm377.602-217.602c8.531-8.531 8.531-21.334 0-29.865l-50.135-50.135c-8.531-8.531-21.334-8.531-29.865 0l-39.468 39.469 79.999 79.998 39.469-39.467z"
+                  ></path>
+                </svg>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -458,7 +470,7 @@ $table-sort-icon-size: 10px;
     padding: 5px 0 0 5px;
     text-align: left;
     &--editable {
-      cursor: pointer;
+      width: 85%;
     }
   }
 
@@ -469,6 +481,14 @@ $table-sort-icon-size: 10px;
   &__row-cell-label {
     padding: 5px;
     //height: 40px;
+  }
+
+  &__row-cell-edit-icon {
+    vertical-align: middle;
+    cursor: pointer;
+  }
+  &__row-cell-label-container {
+    display: flex;
   }
 
   &__row-cell-input {
