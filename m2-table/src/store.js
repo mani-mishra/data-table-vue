@@ -50,12 +50,9 @@ export default new Vuex.Store({
         .set(row)
         .then(() => {
           context.commit("SET_LOADING", false);
-          console.log("Updated payments data successfully.");
         })
         .catch(error => {
-          console.log(
-            `Updating payments data failed\n ${JSON.stringify(error)}`
-          );
+          throw error;
         });
     }
   }

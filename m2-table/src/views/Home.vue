@@ -44,7 +44,6 @@ export default {
           id: "DELETE",
           name: "Delete",
           handler(data) {
-            console.log(data);
             alert(`Mock deleting ${data.length} row(s).`);
           }
         },
@@ -52,7 +51,6 @@ export default {
           id: "EXPORT_CSV",
           name: "Export as CSV",
           handler(data) {
-            console.log(data);
             alert(`Mock exporting ${data.length} row(s) as csv.`);
           }
         },
@@ -60,7 +58,6 @@ export default {
           id: "EXPORT_JSON",
           name: "Export as JSON",
           handler(data) {
-            console.log(data);
             alert(`Mock exporting ${data.length} row(s) as JSON.`);
           }
         }

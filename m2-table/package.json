@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "deploy": "vue-cli-service build && surge dist/ --domain abiding-songs.surge.sh",
     "lint": "vue-cli-service lint",
-    "test": "vue-cli-service test:unit --watch"
+    "test-ci": "vue-cli-service lint && vue-cli-service test:unit",
+    "test-dev": "vue-cli-service test:unit --watch"
   },
   "dependencies": {
     "core-js": "^2.6.5",
