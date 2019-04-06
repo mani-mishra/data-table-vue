@@ -1,11 +1,12 @@
 <template>
-  <div @click="isDropdownOpen = false">
-    <div class="m2-table__actions">
+  <div class="component-wrapper" @click="isDropdownOpen = false">
+    <div class="component-item m2-table-actions">
       <button
-        class="m2-table__actions-item m2-table__actions-button"
+        class="m2-table-actions__item m2-table-actions__button"
         @click.stop="toggleDropdown"
-        :class="{'m2-table__actions-button--disabled':!selectedRows.length}"
+        :class="{'m2-table-actions__button--disabled':!selectedRows.length}"
       >{{selectedRows.length}} row(s) selected</button>
+
       <transition name="slide">
         <ul v-if="isDropdownOpen" class="m2-table__dropdown-list">
           <li
@@ -21,17 +22,19 @@
         <button
           v-if="hasActiveFilters"
           @click="resetFilters"
-          class="m2-table__actions-item m2-table__actions-button"
+          class="m2-table-actions__item m2-table-actions__button"
         >Reset Filters</button>
       </transition>
       <input
+        v-if="tableProps.hasGlobalSearch"
         @@keyup.enter="searchRows"
         v-model="searchText"
-        class="m2-table__actions-item m2-table__search"
+        class="m2-table-actions__item m2-table__search"
         placeholder="Search"
       >
     </div>
-    <div class="m2-table-container">
+
+    <div class="component-item m2-table-container">
       <table class="m2-table">
         <thead class="m2-table__header">
           <tr class="m2-table__header-row">
@@ -132,7 +135,6 @@
                   <div
                     class="m2-table__row-cell-label truncate"
                     :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
-                    :title="row[column.id]"
                   >{{ row[column.id] | runTransforms(column) }}</div>
                   <svg
                     v-if="column.isCellEditable"
@@ -159,6 +161,7 @@
       :pageSize="pageSize"
       :totalCount="filteredRows.length"
       v-on:pageChanged="page = $event"
+      class="component-item"
     ></M2Pagination>
   </div>
 </template>
@@ -179,8 +182,11 @@ export default {
     tableProps: {
       type: Object,
       default: () => ({
-        itemsPerPage: 10,
-        isPaginated: true
+        itemsPerPage: 0,
+        isPaginated: false,
+        isSelectable: false,
+        rowActions: [],
+        hasGlobalSearch: false
       })
     },
 
@@ -386,6 +392,23 @@ $table-sort-icon-size: 10px;
 $table-checkbox-column-width: 50px;
 $table-row-cell-height: 50px;
 
+.component-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.component-item {
+  &:nth-child(1) {
+    order: 2;
+  }
+  &:nth-child(2) {
+    order: 3;
+  }
+  &:nth-child(3) {
+    order: 4;
+  }
+}
+
 // styles for default resolution
 .header-cell {
   width: $table-cell-width;
@@ -403,6 +426,9 @@ $table-row-cell-height: 50px;
 
   &--checkbox {
     width: $table-checkbox-column-width;
+    .m2-checkbox__label:before {
+      border-color: $color-white;
+    }
   }
 
   &__content {
@@ -475,13 +501,6 @@ $table-row-cell-height: 50px;
   width: 100%;
   overflow: auto;
   table-layout: fixed;
-
-  &__actions {
-    display: flex;
-    justify-content: space-between;
-    height: 35px;
-    margin-bottom: 10px;
-  }
 
   &__dropdown-list {
     position: absolute;
@@ -599,8 +618,14 @@ $table-row-cell-height: 50px;
       width: #{$table-cell-width * 2};
     }
   }
+}
 
-  &__actions-button {
+.m2-table-actions {
+  display: flex;
+  justify-content: space-between;
+  height: 35px;
+  margin-bottom: 10px;
+  &__button {
     color: $color-white;
     background-color: $color-ternary;
     border-radius: 3px;
@@ -654,6 +679,13 @@ $breakpoint-b: 768px;
   $margin-between-blocks: 15px;
   $cell-height: 60px;
 
+  .component-item {
+    &:nth-child(3) {
+      order: 1;
+      margin-bottom: 10px;
+    }
+  }
+
   .header-cell {
     width: auto;
     height: $cell-height;
@@ -682,20 +714,20 @@ $breakpoint-b: 768px;
     }
   }
 
-  .m2-table {
-    .truncate {
-      width: auto;
-    }
+  .m2-table-actions {
+    height: 100%;
+    flex-direction: column;
 
-    &__actions {
-      height: 100%;
-      flex-direction: column;
-    }
-
-    &__actions-item {
+    &__item {
       height: 40px;
       width: 100%;
       margin-bottom: 5px;
+    }
+  }
+
+  .m2-table {
+    .truncate {
+      width: auto;
     }
 
     &__header {
@@ -750,7 +782,6 @@ $breakpoint-b: 768px;
 
     &__row-cell-label {
       padding: 0px;
-      //height: 40px;
     }
 
     &__row-cell-label-container {

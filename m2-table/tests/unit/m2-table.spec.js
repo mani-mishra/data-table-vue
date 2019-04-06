@@ -4,18 +4,21 @@ import M2Table from "@/components/m2-table.vue";
 
 const columnDefs = [
   {
+    id: "id",
     label: "id",
     isSortable: true,
     isFilterable: false,
     isCellEditable: false
   },
   {
+    id: "name",
     label: "name",
     isSortable: true,
     isFilterable: true,
     isCellEditable: true
   },
   {
+    id: "description",
     label: "description",
     isSortable: false,
     isFilterable: true,
