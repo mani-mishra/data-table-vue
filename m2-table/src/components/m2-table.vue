@@ -3,11 +3,16 @@
     <div class="component-item m2-table-actions">
       <button
         class="m2-table-actions__item m2-table-actions__button"
-        :class="{'m2-table-actions__button--disabled':!selectedRows.length}"
+        :class="{ 'm2-table-actions__button--disabled': !selectedRows.length }"
         @click.stop="toggleDropdown"
       >
-        <div class="m2-table-actions__button-label">{{selectedRows.length}} row(s) selected</div>
-        <div class="chevron" :class="isDropdownOpen? 'chevron--up': ' chevron--down'"></div>
+        <div class="m2-table-actions__button-label">
+          {{ selectedRows.length }} row(s) selected
+        </div>
+        <div
+          class="chevron"
+          :class="isDropdownOpen ? 'chevron--up' : ' chevron--down'"
+        ></div>
       </button>
       <transition name="slide">
         <ul v-if="isDropdownOpen" class="m2-table__dropdown-list">
@@ -16,7 +21,9 @@
             v-for="action in tableProps.rowActions"
             :key="action.id"
             @click="onActionClick(action)"
-          >{{action.name}}</li>
+          >
+            {{ action.name }}
+          </li>
         </ul>
       </transition>
 
@@ -25,7 +32,9 @@
           v-if="hasActiveFilters"
           @click="resetFilters"
           class="m2-table-actions__item m2-table-actions__button"
-        >Reset Filters</button>
+        >
+          Reset Filters
+        </button>
       </transition>
       <!-- bind input event too for handling both touch screens-->
       <input
@@ -34,7 +43,7 @@
         @input="searchText = $event.target.value"
         class="m2-table-actions__item m2-table__search"
         placeholder="Search"
-      >
+      />
     </div>
 
     <M2Pagination
@@ -50,22 +59,25 @@
       <table class="m2-table">
         <thead class="m2-table__header">
           <tr class="m2-table__header-row">
-            <th v-if="tableProps.isSelectable" class="header-cell header-cell--checkbox">
+            <th
+              v-if="tableProps.isSelectable"
+              class="header-cell header-cell--checkbox"
+            >
               <input
                 id="select-all"
                 type="checkbox"
                 class="m2-checkbox"
                 @click="onSelectAll"
                 v-model="isSelectAll"
-              >
+              />
               <label for="select-all" class="m2-checkbox__label"></label>
             </th>
             <th
               v-for="column in columns"
               :class="[
-              { 'header-cell--active': sortKey == column.id },
-              column.cellClassNames
-            ]"
+                { 'header-cell--active': sortKey == column.id },
+                column.cellClassNames
+              ]"
               :key="column.id"
               class="header-cell"
             >
@@ -74,7 +86,9 @@
                   <div
                     v-if="column.isEditing || column.filterText"
                     class="header-cell__name--mini"
-                  >{{ column.label }}</div>
+                  >
+                    {{ column.label }}
+                  </div>
 
                   <input
                     v-if="column.isEditing"
@@ -84,26 +98,27 @@
                     :value="column.filterText"
                     class="header-cell__input"
                     type="text"
-                  >
+                  />
                   <div
                     v-else
                     @click="onColumnHeaderClick(column)"
                     class="header-cell__name"
                     :class="{
-                    'header-cell__name--filterable': column.isFilterable,
-                    'header-cell__name--active': column.isEditing || column.filterText
-                  }"
-                  >{{ column.filterText || column.label }}</div>
+                      'header-cell__name--filterable': column.isFilterable,
+                      'header-cell__name--active':
+                        column.isEditing || column.filterText
+                    }"
+                  >
+                    {{ column.filterText || column.label }}
+                  </div>
                 </div>
 
                 <div
                   v-if="column.isSortable"
                   class="chevron header-cell__sort-icon"
                   :class="
-                  sortOrders[column.id] > 0
-                    ? 'chevron--up'
-                    : 'chevron--down'
-                "
+                    sortOrders[column.id] > 0 ? 'chevron--up' : 'chevron--down'
+                  "
                   @click="sortBy(column)"
                 ></div>
               </div>
@@ -111,7 +126,11 @@
           </tr>
         </thead>
         <tbody class="m2-table__body">
-          <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
+          <tr
+            class="m2-table__row"
+            v-for="(row, rowIndex) in paginatedRows"
+            :key="row.id"
+          >
             <td
               v-if="tableProps.isSelectable"
               class="m2-table__row-cell m2-table__row-checkbox-cell"
@@ -123,7 +142,7 @@
                 :value="row.id"
                 v-model="selectedRows"
                 @change="updateSelectall()"
-              >
+              />
               <label :for="row.id" class="m2-checkbox__label"></label>
             </td>
             <td
@@ -142,12 +161,16 @@
                   class="m2-table__row-cell-input"
                   type="text"
                   :value="row[column.id]"
-                >
+                />
                 <div class="m2-table__row-cell-label-container" v-else>
                   <div
                     class="m2-table__row-cell-label truncate"
-                    :class="{ 'm2-table__row-cell--editable': column.isCellEditable }"
-                  >{{ row[column.id] | runTransforms(column) }}</div>
+                    :class="{
+                      'm2-table__row-cell--editable': column.isCellEditable
+                    }"
+                  >
+                    {{ row[column.id] | runTransforms(column) }}
+                  </div>
                   <svg
                     v-if="column.isCellEditable"
                     @click="onCellClick(row, column)"
@@ -180,14 +203,12 @@
 
 <script>
 import M2Pagination from "@/components/m2-pagination.vue";
-import TileSpinner from "@/components/spinner.vue";
 import { mapGetters } from "vuex";
 
 export default {
   name: "M2Table",
   components: {
-    M2Pagination,
-    TileSpinner
+    M2Pagination
   },
 
   props: {
