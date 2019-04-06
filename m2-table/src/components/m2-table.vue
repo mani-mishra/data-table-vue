@@ -27,9 +27,10 @@
           class="m2-table-actions__item m2-table-actions__button"
         >Reset Filters</button>
       </transition>
-      <!-- bind input event for handling both touch screens and desktop-->
+      <!-- bind input event too for handling both touch screens-->
       <input
         v-if="tableProps.hasGlobalSearch"
+        v-model="searchText"
         @input="searchText = $event.target.value"
         class="m2-table-actions__item m2-table__search"
         placeholder="Search"
