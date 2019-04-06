@@ -28,17 +28,22 @@ const columnDefs = [
 const model = [
   {
     id: "A",
-    name: "Seinfeld",
-    description: "ABC"
+    name: "Jerry Seinfeld",
+    description: "abcd"
   },
   {
     id: "B",
-    name: "Elaine",
-    description: "abc"
+    name: "Geroge Costanza",
+    description: "def"
   },
   {
     id: "C",
-    name: "Kramer",
+    name: "Elaine Benes",
+    description: "abc"
+  },
+  {
+    id: "D",
+    name: "Cosmo Kramer",
     description: "def"
   }
 ];
@@ -56,21 +61,21 @@ const ROW = "[data-test-row='true']";
 const SORT_ICON = "[data-test-header-cell__sort-icon='true']";
 const FILTERABLE_COLUMN_LABEL = ".header-cell__name--filterable";
 const FILTERABLE_COLUMN_INPUT = "[data-test-header-cell__input='true']";
-
+const ROW_CELL_EDIT_ICON = "[data-test-row-cell-edit-icon='true']";
 const HEADER_CHECKBOX_CELL = "[data-test-header-cell--checkbox='true']";
 const ROW_CHECKBOX_CELL = "[data-test-row-checkbox-cell='true']";
 const BULK_ACTIONS_DROPDOWN = "[data-test-table-dropdown='true']";
 const SEARCH_INPUT = "[data-test-table-search='true']";
 const PAGINATION = "[data-test-pagination='true']";
 
-describe("m2-table elements and options", () => {
-  it("renders component elements correctly", () => {
+xdescribe("m2-table renders", () => {
+  it("base elements", () => {
     const wrapper = factory({ columnDefs, model });
     expect(wrapper.findAll(HEADER_CELL).length).to.equal(columnDefs.length);
     expect(wrapper.findAll(ROW).length).to.equal(model.length);
   });
 
-  it("renders optional component elements correctly, when they are true", () => {
+  it("optional elements, when they are true", () => {
     const tableProps = {
       itemsPerPage: 10,
       isPaginated: true,
@@ -78,32 +83,54 @@ describe("m2-table elements and options", () => {
       hasGlobalSearch: true
     };
 
-    const wrapper = factory({ tableProps, columnDefs, model });
+    const localColumnDefs = columnDefs.map(col => ({
+      ...col,
+      isSortable: true,
+      isFilterable: true,
+      isCellEditable: true
+    }));
+    const wrapper = factory({ tableProps, columnDefs: localColumnDefs, model });
     expect(wrapper.find(BULK_ACTIONS_DROPDOWN).exists()).to.be.true;
     expect(wrapper.find(SEARCH_INPUT).exists()).to.be.true;
     expect(wrapper.find(HEADER_CHECKBOX_CELL).exists()).to.be.true;
     expect(wrapper.findAll(ROW_CHECKBOX_CELL).length).to.equal(model.length);
+    expect(wrapper.findAll(SORT_ICON).length).to.equal(localColumnDefs.length);
+    expect(wrapper.findAll(FILTERABLE_COLUMN_LABEL).length).to.equal(
+      localColumnDefs.length
+    );
+    expect(wrapper.findAll(ROW_CELL_EDIT_ICON).length).to.equal(
+      localColumnDefs.length * model.length
+    );
     expect(wrapper.find(PAGINATION).exists()).to.be.true;
   });
 
-  it("doesn't render optional component elements correctly, when they are false", () => {
+  it("doesn't render optional elements, when they are false", () => {
     const tableProps = {
       isPaginated: false,
       isSelectable: false,
       hasGlobalSearch: false
     };
 
-    const wrapper = factory({ tableProps, columnDefs, model });
+    const localColumnDefs = columnDefs.map(col => ({
+      ...col,
+      isSortable: false,
+      isFilterable: false,
+      isCellEditable: false
+    }));
+    const wrapper = factory({ tableProps, columnDefs: localColumnDefs, model });
     expect(wrapper.find(BULK_ACTIONS_DROPDOWN).exists()).to.be.false;
     expect(wrapper.find(SEARCH_INPUT).exists()).to.be.false;
     expect(wrapper.find(HEADER_CHECKBOX_CELL).exists()).to.be.false;
     expect(wrapper.findAll(ROW_CHECKBOX_CELL).length).to.equal(0);
+    expect(wrapper.findAll(SORT_ICON).length).to.equal(0);
+    expect(wrapper.findAll(FILTERABLE_COLUMN_LABEL).length).to.equal(0);
+    expect(wrapper.findAll(ROW_CELL_EDIT_ICON).length).to.equal(0);
     expect(wrapper.find(PAGINATION).exists()).to.be.false;
   });
 });
 
-describe("m2-table user interactions", () => {
-  it("sorts columns correctly", () => {
+describe("m2-table correctly", () => {
+  xit("sorts applicable columns", () => {
     const wrapper = factory({ columnDefs, model });
     let tableRows = wrapper.findAll(ROW);
     const sortIcon = wrapper.findAll(SORT_ICON);
@@ -139,7 +166,7 @@ describe("m2-table user interactions", () => {
     }
   });
 
-  it("filters columns correctly", () => {
+  xit("filters applicable columns", () => {
     const wrapper = factory({ columnDefs, model });
     let tableRows = wrapper.findAll(ROW);
     const filterableColumns = wrapper.findAll(FILTERABLE_COLUMN_LABEL);
@@ -172,8 +199,33 @@ describe("m2-table user interactions", () => {
     expect(tableRows.length).to.equal(1);
   });
 
-  it("searches across columns correctly", () => {});
-  it("handles pagination correctly", () => {});
-  it("handles bulk actions correctly", () => {});
-  it("allows inline editing", () => {});
+  it("searches across all columns head", () => {
+    const tableProps = {
+      hasGlobalSearch: true
+    };
+
+    const wrapper = factory({ tableProps, columnDefs, model });
+    const searchEl = wrapper.find(SEARCH_INPUT);
+
+    let tableRows = wrapper.findAll(ROW);
+    expect(tableRows.length).to.equal(model.length);
+
+    // searching against 2nd column
+    searchEl.setValue("jerry");
+    tableRows = wrapper.findAll(ROW);
+    expect(tableRows.length).to.equal(1);
+
+    // searching against 2nd column
+    searchEl.setValue("cosmo");
+    tableRows = wrapper.findAll(ROW);
+    expect(tableRows.length).to.equal(1);
+
+    // searching against 3rd column
+    searchEl.setValue("def");
+    tableRows = wrapper.findAll(ROW);
+    expect(tableRows.length).to.equal(2);
+  });
+  it("performs pagination", () => {});
+  it("allows bulk actions", () => {});
+  it("supports inline editing", () => {});
 });
