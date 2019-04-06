@@ -3,11 +3,7 @@
     <TileSpinner v-if="isLoading"></TileSpinner>
     <div v-else class="page">
       <h1 class="page__header">Payments</h1>
-      <m2-table
-        :tableProps="tapbleProps"
-        :model="payments"
-        :columnDefs="gridColumns"
-      ></m2-table>
+      <m2-table :tableProps="tapbleProps" :model="payments" :columnDefs="gridColumns"></m2-table>
     </div>
   </div>
 </template>
@@ -68,14 +64,6 @@ export default {
     },
 
     gridColumns: [
-      // {
-      //   id: "id",
-      //   label: "UUID",
-      //   isSortable: true,
-      //   isFilterable: true,
-      //   isCellEditable: false,
-      //   cellClassNames: "m2-table__cell--large"
-      // },
       {
         id: "name",
         label: "Name",
@@ -111,7 +99,7 @@ export default {
         transform(val) {
           return `$ ${val}`;
         },
-        cellClassNames: "m2-table__cell--xs"
+        cellClassNames: "m2-table__cell--small"
       }
     ]
   })
