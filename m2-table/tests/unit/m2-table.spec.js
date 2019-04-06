@@ -50,21 +50,60 @@ const factory = (values = {}) => {
 };
 
 // Element Selectors
-const HEADER_CELL = ".m2-table__header-cell";
-const ROW_CELL = ".m2-table__row-cell";
-const ROW = ".m2-table__row";
-const SORT_ICON = ".m2-table__header-sort-icon";
-const FILTERABLE_COLUMN_LABEL = ".m2-table__header-label--filterable";
-const FILTERABLE_COLUMN_INPUT = ".m2-table__header-filter-input";
+const HEADER_CELL = "[data-test-header-cell='true']";
+const ROW_CELL = "[data-test-row-cell='true']";
+const ROW = "[data-test-row='true']";
+const SORT_ICON = "[data-test-header-cell__sort-icon='true']";
+const FILTERABLE_COLUMN_LABEL = ".header-cell__name--filterable";
+const FILTERABLE_COLUMN_INPUT = "[data-test-header-cell__input='true']";
 
-describe("m2-table.vue", () => {
-  it("renders table correctly", () => {
+const HEADER_CHECKBOX_CELL = "[data-test-header-cell--checkbox='true']";
+const ROW_CHECKBOX_CELL = "[data-test-row-checkbox-cell='true']";
+const BULK_ACTIONS_DROPDOWN = "[data-test-table-dropdown='true']";
+const SEARCH_INPUT = "[data-test-table-search='true']";
+const PAGINATION = "[data-test-pagination='true']";
+
+describe("m2-table elements and options", () => {
+  it("renders component elements correctly", () => {
     const wrapper = factory({ columnDefs, model });
     expect(wrapper.findAll(HEADER_CELL).length).to.equal(columnDefs.length);
     expect(wrapper.findAll(ROW).length).to.equal(model.length);
   });
 
-  it("sorts column correctly", () => {
+  it("renders optional component elements correctly, when they are true", () => {
+    const tableProps = {
+      itemsPerPage: 10,
+      isPaginated: true,
+      isSelectable: true,
+      hasGlobalSearch: true
+    };
+
+    const wrapper = factory({ tableProps, columnDefs, model });
+    expect(wrapper.find(BULK_ACTIONS_DROPDOWN).exists()).to.be.true;
+    expect(wrapper.find(SEARCH_INPUT).exists()).to.be.true;
+    expect(wrapper.find(HEADER_CHECKBOX_CELL).exists()).to.be.true;
+    expect(wrapper.findAll(ROW_CHECKBOX_CELL).length).to.equal(model.length);
+    expect(wrapper.find(PAGINATION).exists()).to.be.true;
+  });
+
+  it("doesn't render optional component elements correctly, when they are false", () => {
+    const tableProps = {
+      isPaginated: false,
+      isSelectable: false,
+      hasGlobalSearch: false
+    };
+
+    const wrapper = factory({ tableProps, columnDefs, model });
+    expect(wrapper.find(BULK_ACTIONS_DROPDOWN).exists()).to.be.false;
+    expect(wrapper.find(SEARCH_INPUT).exists()).to.be.false;
+    expect(wrapper.find(HEADER_CHECKBOX_CELL).exists()).to.be.false;
+    expect(wrapper.findAll(ROW_CHECKBOX_CELL).length).to.equal(0);
+    expect(wrapper.find(PAGINATION).exists()).to.be.false;
+  });
+});
+
+describe("m2-table user interactions", () => {
+  it("sorts columns correctly", () => {
     const wrapper = factory({ columnDefs, model });
     let tableRows = wrapper.findAll(ROW);
     const sortIcon = wrapper.findAll(SORT_ICON);
@@ -132,4 +171,9 @@ describe("m2-table.vue", () => {
     tableRows = wrapper.findAll(ROW);
     expect(tableRows.length).to.equal(1);
   });
+
+  it("searches across columns correctly", () => {});
+  it("handles pagination correctly", () => {});
+  it("handles bulk actions correctly", () => {});
+  it("allows inline editing", () => {});
 });

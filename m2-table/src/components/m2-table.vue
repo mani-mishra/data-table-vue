@@ -2,6 +2,8 @@
   <div class="component-wrapper" @click="isDropdownOpen = false">
     <div class="component-item m2-table-actions">
       <button
+        data-test-table-dropdown="true"
+        v-if="tableProps.isSelectable"
         class="m2-table-actions__item m2-table-actions__button"
         :class="{ 'm2-table-actions__button--disabled': !selectedRows.length }"
         @click.stop="toggleDropdown"
@@ -29,6 +31,7 @@
       </transition>
       <!-- bind input event too for handling both touch screens-->
       <input
+        data-test-table-search="true"
         v-if="tableProps.hasGlobalSearch"
         v-model="searchText"
         @input="searchText = $event.target.value"
@@ -38,7 +41,7 @@
     </div>
 
     <M2Pagination
-      v-if="paginatedRows.length"
+      v-if="showPagination"
       :currentPage="page"
       :pageSize="pageSize"
       :totalCount="filteredRows.length"
@@ -50,7 +53,11 @@
       <table class="m2-table">
         <thead class="m2-table__header">
           <tr class="m2-table__header-row">
-            <th v-if="tableProps.isSelectable" class="header-cell header-cell--checkbox">
+            <th
+              v-if="tableProps.isSelectable"
+              data-test-header-cell--checkbox="true"
+              class="header-cell header-cell--checkbox"
+            >
               <input
                 id="select-all"
                 type="checkbox"
@@ -61,6 +68,7 @@
               <label for="select-all" class="m2-checkbox__label"></label>
             </th>
             <th
+              data-test-header-cell="true"
               v-for="column in columns"
               :class="[
                 { 'header-cell--active': sortKey == column.id },
@@ -77,6 +85,7 @@
                   >{{ column.label }}</div>
 
                   <input
+                    data-test-header-cell__input="true"
                     v-if="column.isEditing"
                     v-focus
                     @keyup.enter="filterRows($event, column)"
@@ -98,6 +107,7 @@
                 </div>
 
                 <div
+                  data-test-header-cell__sort-icon="true"
                   v-if="column.isSortable"
                   class="chevron header-cell__sort-icon"
                   :class="
@@ -110,10 +120,16 @@
           </tr>
         </thead>
         <tbody class="m2-table__body">
-          <tr class="m2-table__row" v-for="(row, rowIndex) in paginatedRows" :key="row.id">
+          <tr
+            class="m2-table__row"
+            data-test-row="true"
+            v-for="(row, rowIndex) in paginatedRows"
+            :key="row.id"
+          >
             <td
               v-if="tableProps.isSelectable"
               class="m2-table__row-cell m2-table__row-checkbox-cell"
+              data-test-row-checkbox-cell="true"
             >
               <input
                 type="checkbox"
@@ -126,6 +142,7 @@
               <label :for="row.id" class="m2-checkbox__label"></label>
             </td>
             <td
+              data-test-row-cell="true"
               :data-label="column.label"
               class="m2-table__row-cell"
               :class="column.cellClassNames"
@@ -169,7 +186,8 @@
       </table>
     </div>
     <M2Pagination
-      v-if="paginatedRows.length"
+      data-test-pagination="true"
+      v-if="showPagination"
       :currentPage="page"
       :pageSize="pageSize"
       :totalCount="filteredRows.length"
@@ -242,6 +260,10 @@ export default {
   computed: {
     ...mapGetters(["isLoading"]),
 
+    showPagination() {
+      return this.tableProps.isPaginated && this.paginatedRows.length;
+    },
+
     hasActiveFilters() {
       return this.searchText || this.columns.some(col => col.filterText);
     },
@@ -251,9 +273,13 @@ export default {
     },
 
     paginatedRows() {
-      const startIndex = (this.page - 1) * this.tableProps.itemsPerPage;
-      const endIndex = startIndex + this.tableProps.itemsPerPage;
-      return this.filteredRows.slice(startIndex, endIndex);
+      if (this.tableProps.isPaginated) {
+        const startIndex = (this.page - 1) * this.tableProps.itemsPerPage;
+        const endIndex = startIndex + this.tableProps.itemsPerPage;
+        return this.filteredRows.slice(startIndex, endIndex);
+      } else {
+        return this.filteredRows;
+      }
     },
 
     filteredRows() {
