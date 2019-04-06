@@ -41,7 +41,7 @@ export default {
           name: "Delete",
           handler(data) {
             console.log(data);
-            alert("Delete Action is performed");
+            alert(`Mock deleting ${data.length} row(s).`);
           }
         },
         {
@@ -49,7 +49,7 @@ export default {
           name: "Export as CSV",
           handler(data) {
             console.log(data);
-            alert("Export as CSV Action is performed");
+            alert(`Mock exporting ${data.length} row(s) as csv.`);
           }
         },
         {
@@ -57,7 +57,7 @@ export default {
           name: "Export as JSON",
           handler(data) {
             console.log(data);
-            alert("Export as JSON is performed");
+            alert(`Mock exporting ${data.length} row(s) as JSON.`);
           }
         }
       ]

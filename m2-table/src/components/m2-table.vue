@@ -527,8 +527,8 @@ $table-row-cell-height: 50px;
     cursor: pointer;
     padding: 10px;
     background-color: $color-white;
-    border-bottom: 1px solid $color-border;
-    border-left: 3px solid $color-border;
+    border: 2px solid $color-border;
+    border-top: 0;
   }
 
   &__search {
