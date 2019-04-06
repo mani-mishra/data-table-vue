@@ -3,7 +3,11 @@
     <TileSpinner v-if="isLoading"></TileSpinner>
     <div v-else class="page">
       <h1 class="page__header">Payments</h1>
-      <m2-table :tableProps="tapbleProps" :model="payments" :columnDefs="gridColumns"></m2-table>
+      <m2-table
+        :tableProps="tapbleProps"
+        :model="payments"
+        :columnDefs="gridColumns"
+      ></m2-table>
     </div>
   </div>
 </template>

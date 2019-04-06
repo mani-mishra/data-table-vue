@@ -8,8 +8,13 @@
         :class="{ 'm2-table-actions__button--disabled': !selectedRows.length }"
         @click.stop="toggleDropdown"
       >
-        <div class="m2-table-actions__button-label">{{ selectedRows.length }} row(s) selected</div>
-        <div class="chevron" :class="isDropdownOpen ? 'chevron--up' : ' chevron--down'"></div>
+        <div class="m2-table-actions__button-label">
+          {{ selectedRows.length }} row(s) selected
+        </div>
+        <div
+          class="chevron"
+          :class="isDropdownOpen ? 'chevron--up' : ' chevron--down'"
+        ></div>
       </button>
       <transition name="slide">
         <ul v-if="isDropdownOpen" class="m2-table__dropdown-list">
@@ -18,7 +23,9 @@
             v-for="action in tableProps.rowActions"
             :key="action.id"
             @click="onActionClick(action)"
-          >{{ action.name }}</li>
+          >
+            {{ action.name }}
+          </li>
         </ul>
       </transition>
 
@@ -28,7 +35,9 @@
           v-if="hasActiveFilters"
           @click="resetFilters"
           class="m2-table-actions__item m2-table-actions__button"
-        >Reset Filters</button>
+        >
+          Reset Filters
+        </button>
       </transition>
       <!-- bind input event too for handling both touch screens-->
       <input
@@ -38,7 +47,7 @@
         @input="searchText = $event.target.value"
         class="m2-table-actions__item m2-table__search"
         placeholder="Search"
-      >
+      />
     </div>
 
     <M2Pagination
@@ -65,7 +74,7 @@
                 class="m2-checkbox"
                 @click="onSelectAll"
                 v-model="isSelectAll"
-              >
+              />
               <label for="select-all" class="m2-checkbox__label"></label>
             </th>
             <th
@@ -83,7 +92,9 @@
                   <div
                     v-if="column.isEditing || column.filterText"
                     class="header-cell__name--mini"
-                  >{{ column.label }}</div>
+                  >
+                    {{ column.label }}
+                  </div>
 
                   <input
                     data-test-header-cell__input="true"
@@ -94,7 +105,7 @@
                     :value="column.filterText"
                     class="header-cell__input"
                     type="text"
-                  >
+                  />
                   <div
                     v-else
                     @click="onColumnHeaderClick(column)"
@@ -104,7 +115,9 @@
                       'header-cell__name--active':
                         column.isEditing || column.filterText
                     }"
-                  >{{ column.filterText || column.label }}</div>
+                  >
+                    {{ column.filterText || column.label }}
+                  </div>
                 </div>
 
                 <div
@@ -139,7 +152,7 @@
                 :value="row.id"
                 v-model="selectedRows"
                 @change="updateSelectall()"
-              >
+              />
               <label :for="row.id" class="m2-checkbox__label"></label>
             </td>
             <td
@@ -160,7 +173,7 @@
                   data-test-row-cell-input="true"
                   type="text"
                   :value="row[column.id]"
-                >
+                />
                 <div v-else class="m2-table__row-cell-label-container">
                   <div
                     :data-test-row-cell--editable="column.isCellEditable"
@@ -168,7 +181,9 @@
                     :class="{
                       'm2-table__row-cell--editable': column.isCellEditable
                     }"
-                  >{{ row[column.id] | runTransforms(column) }}</div>
+                  >
+                    {{ row[column.id] | runTransforms(column) }}
+                  </div>
                   <svg
                     v-if="column.isCellEditable"
                     @click="onCellClick(row, column)"
