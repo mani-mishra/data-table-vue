@@ -34,6 +34,15 @@
       >
     </div>
 
+    <M2Pagination
+      v-if="paginatedRows.length"
+      :currentPage="page"
+      :pageSize="pageSize"
+      :totalCount="filteredRows.length"
+      v-on:pageChanged="page = $event"
+      class="component-item component-item--mobile-only"
+    ></M2Pagination>
+
     <div class="component-item m2-table-container">
       <table class="m2-table">
         <thead class="m2-table__header">
@@ -398,15 +407,18 @@ $table-row-cell-height: 50px;
 }
 
 .component-item {
-  &:nth-child(1) {
-    order: 2;
+  &--mobile-only {
+    display: none;
   }
-  &:nth-child(2) {
-    order: 3;
-  }
-  &:nth-child(3) {
-    order: 4;
-  }
+  // &:nth-child(1) {
+  //   order: 2;
+  // }
+  // &:nth-child(2) {
+  //   order: 3;
+  // }
+  // &:nth-child(3) {
+  //   order: 4;
+  // }
 }
 
 // styles for default resolution
@@ -680,10 +692,14 @@ $breakpoint-b: 768px;
   $cell-height: 60px;
 
   .component-item {
-    &:nth-child(3) {
-      order: 1;
+    &--mobile-only {
+      display: flex;
       margin-bottom: 10px;
     }
+    // &:nth-child(3) {
+    //   order: 1;
+    //   margin-bottom: 10px;
+    // }
   }
 
   .header-cell {
