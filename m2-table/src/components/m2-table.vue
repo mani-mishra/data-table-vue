@@ -24,6 +24,7 @@
 
       <transition name="fade">
         <button
+          data-test-table-reset-filters="true"
           v-if="hasActiveFilters"
           @click="resetFilters"
           class="m2-table-actions__item m2-table-actions__button"
@@ -156,11 +157,13 @@
                   @keyup.enter="saveCellData($event, column, row, rowIndex)"
                   @focusout="currentEditingCellId = ''"
                   class="m2-table__row-cell-input"
+                  data-test-row-cell-input="true"
                   type="text"
                   :value="row[column.id]"
                 >
-                <div class="m2-table__row-cell-label-container" v-else>
+                <div v-else class="m2-table__row-cell-label-container">
                   <div
+                    :data-test-row-cell--editable="column.isCellEditable"
                     class="m2-table__row-cell-label truncate"
                     :class="{
                       'm2-table__row-cell--editable': column.isCellEditable
@@ -279,7 +282,6 @@ export default {
         const endIndex = startIndex + this.tableProps.itemsPerPage;
         return this.filteredRows.slice(startIndex, endIndex);
       } else {
-        console.log(JSON.stringify(this.filteredRows) + "\n\n");
         return this.filteredRows;
       }
     },
