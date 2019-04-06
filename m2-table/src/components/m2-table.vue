@@ -579,7 +579,6 @@ $table-row-cell-height: 50px;
 
   &__row-cell {
     height: $table-row-cell-height;
-    border-bottom: 1px solid $color-border;
     text-align: left;
     &--editable {
       width: 85%;
@@ -790,6 +789,7 @@ $breakpoint-b: 768px;
       width: auto;
       height: $cell-height;
       padding-left: 10px;
+      border-bottom: 1px solid $color-border;
       &::before {
         content: attr(data-label);
         font-weight: 700;
