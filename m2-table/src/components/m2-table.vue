@@ -3,10 +3,12 @@
     <div class="component-item m2-table-actions">
       <button
         class="m2-table-actions__item m2-table-actions__button"
-        @click.stop="toggleDropdown"
         :class="{'m2-table-actions__button--disabled':!selectedRows.length}"
-      >{{selectedRows.length}} row(s) selected</button>
-
+        @click.stop="toggleDropdown"
+      >
+        <div class="m2-table-actions__button-label">{{selectedRows.length}} row(s) selected</div>
+        <div class="chevron" :class="isDropdownOpen? 'chevron--up': ' chevron--down'"></div>
+      </button>
       <transition name="slide">
         <ul v-if="isDropdownOpen" class="m2-table__dropdown-list">
           <li
@@ -25,10 +27,10 @@
           class="m2-table-actions__item m2-table-actions__button"
         >Reset Filters</button>
       </transition>
+      <!-- bind input event for handling both touch screens and desktop-->
       <input
         v-if="tableProps.hasGlobalSearch"
-        @@keyup.enter="searchRows"
-        v-model="searchText"
+        @input="searchText = $event.target.value"
         class="m2-table-actions__item m2-table__search"
         placeholder="Search"
       >
@@ -95,11 +97,11 @@
 
                 <div
                   v-if="column.isSortable"
-                  class="header-cell__sort-icon"
+                  class="chevron header-cell__sort-icon"
                   :class="
                   sortOrders[column.id] > 0
-                    ? 'header-cell__sort-icon--asc'
-                    : 'header-cell__sort-icon--desc'
+                    ? 'chevron--up'
+                    : 'chevron--down'
                 "
                   @click="sortBy(column)"
                 ></div>
@@ -421,12 +423,36 @@ $table-row-cell-height: 50px;
   // }
 }
 
+.chevron {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  cursor: pointer;
+
+  &--down {
+    border-left: $table-sort-icon-size solid transparent;
+    border-right: $table-sort-icon-size solid transparent;
+    border-top: $table-sort-icon-size solid $color-white;
+  }
+
+  &--up {
+    border-left: $table-sort-icon-size solid transparent;
+    border-right: $table-sort-icon-size solid transparent;
+    border-bottom: $table-sort-icon-size solid $color-white;
+  }
+}
+
 // styles for default resolution
 .header-cell {
   width: $table-cell-width;
   padding: 2px 10px;
   text-align: left;
   user-select: none;
+
+  &__sort-icon {
+    opacity: 0.5;
+  }
 
   &--active {
     color: $color-white;
@@ -482,27 +508,6 @@ $table-row-cell-height: 50px;
     border: 1px solid $color-border;
     background-color: $color-primary;
     color: $color-white;
-  }
-
-  &__sort-icon {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 5px;
-    opacity: 0.5;
-    cursor: pointer;
-
-    &--desc {
-      border-left: $table-sort-icon-size solid transparent;
-      border-right: $table-sort-icon-size solid transparent;
-      border-top: $table-sort-icon-size solid $color-white;
-    }
-
-    &--asc {
-      border-left: $table-sort-icon-size solid transparent;
-      border-right: $table-sort-icon-size solid transparent;
-      border-bottom: $table-sort-icon-size solid $color-white;
-    }
   }
 }
 
@@ -637,6 +642,12 @@ $table-row-cell-height: 50px;
   justify-content: space-between;
   height: 35px;
   margin-bottom: 10px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+  }
+
   &__button {
     color: $color-white;
     background-color: $color-ternary;
