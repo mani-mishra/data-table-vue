@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view />
+    <router-view/>
   </div>
 </template>
 
@@ -24,6 +24,7 @@ body {
 }
 
 .page {
+  max-width: $app-width;
   width: 80%;
   margin: auto;
 

@@ -696,7 +696,7 @@ $table-row-cell-height: 40px;
   }
 }
 
-$breakpoint-a: 1100px;
+$breakpoint-a: 1000px;
 $breakpoint-b: 768px;
 
 @media (min-width: $breakpoint-b) and (max-width: $breakpoint-a) {
