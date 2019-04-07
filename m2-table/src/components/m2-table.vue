@@ -438,7 +438,6 @@ $table-row-cell-height: 50px;
 .component-wrapper {
   display: flex;
   flex-direction: column;
-  height: 90vh;
 }
 
 .component-item {
@@ -535,11 +534,6 @@ $table-row-cell-height: 50px;
   }
 }
 
-.m2-table-container {
-  height: 600px;
-  overflow-y: auto;
-}
-
 .m2-table {
   border-collapse: collapse;
   margin: 0;
@@ -620,7 +614,6 @@ $table-row-cell-height: 50px;
 
   &__row-cell-label {
     padding: 5px;
-    //height: 40px;
   }
 
   &__row-cell-edit-icon {
@@ -628,6 +621,7 @@ $table-row-cell-height: 50px;
     cursor: pointer;
     color: $color-gray;
   }
+
   &__row-cell-label-container {
     height: 100%;
     display: flex;
@@ -734,14 +728,6 @@ $breakpoint-b: 768px;
   $margin-between-blocks: 15px;
   $cell-height: 60px;
 
-  .component-wrapper {
-    height: auto;
-  }
-
-  .m2-table-container {
-    height: unset;
-    overflow-y: unset;
-  }
   .component-item {
     &--mobile-only {
       display: flex;
