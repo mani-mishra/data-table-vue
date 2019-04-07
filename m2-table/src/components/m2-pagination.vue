@@ -124,6 +124,7 @@ $chevron-size: 10px;
   justify-content: space-between;
   margin-top: 18px;
   color: $color-primary;
+  margin-bottom: 20px;
 
   &__control-container {
     display: flex;
