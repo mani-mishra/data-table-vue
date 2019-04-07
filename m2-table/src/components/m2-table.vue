@@ -115,6 +115,7 @@
                       'header-cell__name--active':
                         column.isEditing || column.filterText
                     }"
+                    title="Click to filter"
                   >
                     {{ column.filterText || column.label }}
                   </div>
@@ -181,6 +182,7 @@
                     :class="{
                       'm2-table__row-cell--editable': column.isCellEditable
                     }"
+                    title="Click pencil icon to edit"
                   >
                     {{ row[column.id] | runTransforms(column) }}
                   </div>
