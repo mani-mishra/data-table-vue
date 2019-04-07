@@ -433,7 +433,9 @@ $table-width: 80%;
 $table-cell-width: 20%;
 $table-sort-icon-size: 10px;
 $table-checkbox-column-width: 50px;
-$table-row-cell-height: 50px;
+
+$table-header-row-height: 50px;
+$table-row-cell-height: 40px;
 
 .component-wrapper {
   display: flex;
@@ -525,7 +527,8 @@ $table-row-cell-height: 50px;
 
   &__input {
     width: 85%;
-    height: 30px;
+    height: #{$table-header-row-height/2};
+    margin-bottom: 5px;
     border-radius: 4px;
     font-weight: 500;
     border: 1px solid $color-border;
@@ -555,6 +558,7 @@ $table-row-cell-height: 50px;
     top: 105px;
     z-index: 2;
   }
+
   &__dropdown-list-items {
     cursor: pointer;
     padding: 10px;
@@ -583,7 +587,7 @@ $table-row-cell-height: 50px;
   }
 
   &__header-row {
-    height: 60px;
+    height: $table-header-row-height;
   }
 
   &__body {
@@ -758,6 +762,7 @@ $breakpoint-b: 768px;
       margin-left: 0;
       margin-right: 10px;
     }
+
     &--checkbox {
       display: flex;
       align-items: center;
