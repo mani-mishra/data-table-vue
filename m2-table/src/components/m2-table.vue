@@ -8,8 +8,13 @@
         :class="{ 'm2-table-actions__button--disabled': !selectedRows.length }"
         @click.stop="toggleDropdown"
       >
-        <div class="m2-table-actions__button-label">{{ selectedRows.length }} row(s) selected</div>
-        <div class="chevron" :class="isDropdownOpen ? 'chevron--up' : ' chevron--down'"></div>
+        <div class="m2-table-actions__button-label">
+          {{ selectedRows.length }} row(s) selected
+        </div>
+        <div
+          class="chevron"
+          :class="isDropdownOpen ? 'chevron--up' : ' chevron--down'"
+        ></div>
       </button>
       <transition name="slide">
         <ul v-if="isDropdownOpen" class="m2-table__dropdown-list">
@@ -18,7 +23,9 @@
             v-for="action in tableProps.rowActions"
             :key="action.id"
             @click="onActionClick(action)"
-          >{{ action.name }}</li>
+          >
+            {{ action.name }}
+          </li>
         </ul>
       </transition>
 
@@ -28,17 +35,22 @@
           v-if="hasActiveFilters"
           @click="resetFilters"
           class="m2-table-actions__item m2-table-actions__button"
-        >Reset Filters</button>
+        >
+          Reset Filters
+        </button>
       </transition>
       <!-- bind input event too for handling both touch screens-->
       <input
         data-test-table-search="true"
         v-if="tableProps.hasGlobalSearch"
         v-model="searchText"
-        @input="searchText = $event.target.value"
+        @input="
+          searchText = $event.target.value;
+          page = 1;
+        "
         class="m2-table-actions__item m2-table__search"
         placeholder="Search"
-      >
+      />
     </div>
 
     <M2Pagination
@@ -65,7 +77,7 @@
                 class="m2-checkbox"
                 @click="onSelectAll"
                 v-model="isSelectAll"
-              >
+              />
               <label for="select-all" class="m2-checkbox__label"></label>
             </th>
             <th
@@ -83,7 +95,9 @@
                   <div
                     v-if="column.isEditing || column.filterText"
                     class="header-cell__name--mini"
-                  >{{ column.label }}</div>
+                  >
+                    {{ column.label }}
+                  </div>
 
                   <input
                     data-test-header-cell__input="true"
@@ -94,7 +108,7 @@
                     :value="column.filterText"
                     class="header-cell__input"
                     type="text"
-                  >
+                  />
                   <div
                     v-else
                     @click="onColumnHeaderClick(column)"
@@ -105,7 +119,9 @@
                         column.isEditing || column.filterText
                     }"
                     title="Click to filter"
-                  >{{ column.filterText || column.label }}</div>
+                  >
+                    {{ column.filterText || column.label }}
+                  </div>
                 </div>
 
                 <div
@@ -140,7 +156,7 @@
                 :value="row.id"
                 v-model="selectedRows"
                 @change="updateSelectall()"
-              >
+              />
               <label :for="row.id" class="m2-checkbox__label"></label>
             </td>
             <td
@@ -161,7 +177,7 @@
                   data-test-row-cell-input="true"
                   type="text"
                   :value="row[column.id]"
-                >
+                />
                 <div v-else class="m2-table__row-cell-label-container">
                   <div
                     :data-test-row-cell--editable="column.isCellEditable"
@@ -170,7 +186,9 @@
                       'm2-table__row-cell--editable': column.isCellEditable
                     }"
                     title="Click pencil icon to edit"
-                  >{{ row[column.id] | runTransforms(column) }}</div>
+                  >
+                    {{ row[column.id] | runTransforms(column) }}
+                  </div>
                   <svg
                     v-if="column.isCellEditable"
                     @click="onCellClick(row, column)"
@@ -289,7 +307,6 @@ export default {
     },
 
     filteredRows() {
-      this.page = 1;
       const sortKey = this.sortKey;
       const searchText = this.searchText && this.searchText.toLowerCase();
       const order = this.sortOrders[sortKey] || 1;
@@ -374,6 +391,7 @@ export default {
     },
 
     filterRows(event, column) {
+      this.page = 1;
       this.columns = this.columns.map(col => {
         if (col.id === column.id) {
           col.isEditing = false;
@@ -392,6 +410,7 @@ export default {
     },
 
     resetFilters() {
+      this.page = 1;
       this.columns = this.columns.map(col => {
         col.filterText = "";
         return col;

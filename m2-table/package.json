@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "deploy": "vue-cli-service build && surge dist/ --domain abiding-songs.surge.sh",
+    "deploy": "vue-cli-service build && surge dist/ --domain m2-table.surge.sh",
     "lint": "vue-cli-service lint",
     "test-ci": "vue-cli-service lint && vue-cli-service test:unit",
     "test-dev": "vue-cli-service test:unit --watch"
