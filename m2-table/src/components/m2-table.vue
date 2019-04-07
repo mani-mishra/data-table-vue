@@ -470,7 +470,6 @@ $table-row-cell-height: 50px;
 // styles for default resolution
 .header-cell {
   width: $table-cell-width;
-  padding: 2px 10px;
   text-align: left;
   user-select: none;
 
@@ -488,6 +487,7 @@ $table-row-cell-height: 50px;
 
   &--checkbox {
     width: $table-checkbox-column-width;
+    text-align: center;
     .m2-checkbox__label:before {
       border-color: $color-white;
     }
@@ -645,7 +645,7 @@ $table-row-cell-height: 50px;
   &__row-checkbox-cell {
     display: flex;
     justify-content: center;
-    //align-items: center;
+    align-items: center;
   }
 
   &__cell {
@@ -750,6 +750,8 @@ $breakpoint-b: 768px;
   }
 
   .header-cell {
+    padding-left: 10px;
+    padding-top: 10px;
     width: auto;
     height: $cell-height;
     border-bottom: 1px solid $color-border;
@@ -760,7 +762,6 @@ $breakpoint-b: 768px;
     }
 
     &__name {
-      margin-top: 10px;
       &--active {
         margin: 0;
       }
@@ -831,6 +832,10 @@ $breakpoint-b: 768px;
         font-weight: 700;
         font-size: 1rem;
       }
+    }
+
+    &__row-checkbox-cell {
+      align-items: unset;
     }
 
     &__row-cell-input {
