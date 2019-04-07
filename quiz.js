@@ -78,11 +78,8 @@ const secret = new fernet.Secret(
   "TluxwB3fV_GWuLkR1_BzGs1Zk90TYAuhNMZP_0q4WyM="
 );
 // Oh no! The code is going over the edge! What are you going to do?
-// const token =
-//   "gAAAAABcon_hcc-Uz_3UozkX-xEOSU9Yt9ABRd40CVjTxSxXlf_YgcO7RDE4G6aStwBqUBwmD_mCU9pH6vhsCqffOPRFd0wiPY721wWmNqELG0q80oXKBy9uC_kQQvaoY71vGrS2DuBgGRneJeJmj-UtkX8v-u3Rb6dtc4m50EDfW-rExSUHLg-X0TzyHHOmle8HYWDCQBU4";
-
 const token =
-  "gAAAAABcor1NMkae-xvZljW-5CqaFq4yacaMiQ0hCKWpxt7-GVv6E8xv6RBa8fZpKE7bLj153VV6Hw4pvMKe_EfEmyMUSeQt3em73HCox2r4goA7Xfme0MBXft2I_uQhdMlfj5vfVENur2ovMLGvmok9AinmIpYbk31qOuaqpkgb6s_3Av_uBcyisVw6q8PAEJ1rQYloqgsl";
+  "gAAAAABcqdRQBzirVH8RYH_CCxpwOnZMyOTq3v8PuxJFYpJTwyGYpCsBHmduv84S2T2Mjm6xtfNxvfgzN8i8LxdrWMibvjIKA0PStrC64wiDyWO2Zdwp-WlId_liyExGa1M6-XXcLaGPNHOHq9YMFiMBciD0cwP6_VfoUfmZqiGm9qYtnw6UTe6SOQA6j2G6Bi0QvW1VWZHL";
 
 const fernetToken = new fernet.Token({ secret, token, ttl: 0 });
 console.log(fernetToken.decode());
